@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>DoramaRank | Angelo</title>
+  <meta name="description" content="DoramaRank é um app para Windows que organiza doramas em uma coleção pessoal, com busca automática, progresso por episódio e estatísticas.">
+  <meta name="author" content="Angelo">
+  <meta name="theme-color" content="#0b0807">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="DoramaRank | Angelo">
+  <meta property="og:description" content="Seu catálogo pessoal de doramas">
+  <link rel="canonical" href="https://angelojr-web.github.io/projetos/doramarank.html">
+  <meta property="og:url" content="https://angelojr-web.github.io/projetos/doramarank.html">
+  <meta property="og:image" content="https://angelojr-web.github.io/assets/img/og/doramarank.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:locale" content="pt_BR">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600&display=swap">
+  <link rel="preload" as="image" href="../assets/img/capas/dorama.webp">
+  <script>document.documentElement.classList.add('js');</script>
+  <link rel="stylesheet" href="../assets/css/tokens.css">
+  <link rel="stylesheet" href="../assets/css/sistema.css">
+  <link rel="stylesheet" href="../assets/css/site.css">
+  <link rel="stylesheet" href="../assets/css/projeto.css">
+</head>
+<body>
+  <svg width="0" height="0" class="so-leitor" aria-hidden="true" focusable="false">
+    <symbol id="i-github" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.4 5.4 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></g></symbol>
+    <symbol id="i-linkedin" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></g></symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" d="M4 8h16M4 16h16"/></symbol>
+    <symbol id="i-fechar" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" d="M6 6l12 12M18 6L6 18"/></symbol>
+  </svg>
+
+  <a class="pular" href="#conteudo">Pular para o conteúdo</a>
+
+  <header class="pa-palco topo">
+    <div class="pa-nav">
+      <a class="pa-marca" href="../index.html" aria-label="Angelo, início">Angel<span class="pa-marca__o">o</span></a>
+      <nav aria-label="Principal">
+        <ul class="pa-nav__links">
+          <li><a class="pa-nav__link" href="../index.html">Início</a></li>
+          <li><a class="pa-nav__link" href="../index.html#projetos" aria-current="page">Projetos</a></li>
+          <li><a class="pa-nav__link" href="../index.html#sobre">Sobre</a></li>
+          <li><a class="pa-nav__link" href="../index.html#contato">Contato</a></li>
+        </ul>
+      </nav>
+      <div class="pa-nav__fim">
+        <a class="pa-icone pa-icone--acao" href="https://github.com/AngeloJR-web" target="_blank" rel="noopener" aria-label="GitHub do Angelo"><svg aria-hidden="true"><use href="#i-github"/></svg></a>
+        <a class="pa-botao pa-botao--primario" href="../index.html#contato">Fale comigo</a>
+        <button class="pa-icone pa-nav__menu" type="button" aria-label="Abrir menu" aria-haspopup="dialog"><svg aria-hidden="true"><use href="#i-menu"/></svg></button>
+      </div>
+    </div>
+  </header>
+
+  <dialog class="menu" id="menu" aria-label="Menu">
+    <div class="menu__topo">
+      <a class="pa-marca" href="../index.html">Angel<span class="pa-marca__o">o</span></a>
+      <button class="pa-icone" type="button" data-fechar aria-label="Fechar menu"><svg aria-hidden="true"><use href="#i-fechar"/></svg></button>
+    </div>
+    <ul class="menu__links">
+      <li><a href="../index.html">Início</a></li>
+      <li><a href="../index.html#projetos">Projetos</a></li>
+      <li><a href="../index.html#sobre">Sobre</a></li>
+      <li><a href="../index.html#contato">Contato</a></li>
+    </ul>
+    <a class="pa-botao pa-botao--primario" href="../index.html#contato">Fale comigo</a>
+  </dialog>
+
+  <main id="conteudo">
+    <section class="pa-palco" aria-labelledby="titulo">
+      <div class="pa-hero caso-hero is-abrindo">
+        <div class="pa-hero__fundo is-on" style="background-image:url(../assets/img/fundos/dorama.webp)"></div>
+        <div class="pa-container caso-hero__grade">
+          <div class="pa-hero__texto">
+            <a class="caso-voltar" href="../index.html#projetos">Todos os projetos</a>
+            <h1 class="pa-h1" id="titulo"><span class="linha"><span>DoramaRank</span></span><span class="linha"><span>– Séries</span></span></h1>
+            <span class="pa-regua"></span>
+            <p class="pa-destaque">Seu catálogo pessoal de doramas</p>
+            <div class="caso-hero__acoes">
+              <a class="pa-botao pa-botao--secundario" href="https://github.com/AngeloJR-web/DoramaRank/releases/latest" target="_blank" rel="noopener">Baixar para Windows</a>
+            </div>
+          </div>
+          <div class="pa-card caso-capa">
+            <img class="pa-card__capa" src="../assets/img/capas/dorama.webp" width="640" height="1104" alt="Capa do DoramaRank, com a tela do app sobre uma paisagem de montanhas">
+            <span class="pa-tag">#Electron</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="caso-resumo" aria-label="Ficha do projeto">
+      <div class="pa-container">
+        <dl class="caso-ficha">
+          <div>
+            <dt class="pa-rotulo">Plataforma</dt>
+            <dd>Windows</dd>
+          </div>
+          <div>
+            <dt class="pa-rotulo">Versão</dt>
+            <dd>1.0.0</dd>
+          </div>
+          <div>
+            <dt class="pa-rotulo">Publicado em</dt>
+            <dd>Março de 2026</dd>
+          </div>
+          <div>
+            <dt class="pa-rotulo">Feito com</dt>
+            <dd>Electron, JavaScript, SQLite, Chart.js</dd>
+          </div>
+          <div>
+            <dt class="pa-rotulo">Código</dt>
+            <dd><a class="pa-link" href="https://github.com/AngeloJR-web/DoramaRank" target="_blank" rel="noopener">Ver no GitHub</a></dd>
+          </div>
+        </dl>
+      </div>
+    </section>
+
+    <section class="pa-secao" aria-labelledby="titulo-resolve">
+      <div class="pa-container caso-duas">
+        <div class="pa-secao__cabeca">
+          <h2 class="pa-h2" id="titulo-resolve">O que ele resolve</h2>
+          <span class="pa-regua"></span>
+        </div>
+        <div class="caso-texto">
+          <p>Quem acompanha muitas séries asiáticas acaba perdendo a conta do que já viu, do que parou e do que quer ver. O DoramaRank organiza tudo em uma coleção pessoal, com notas, progresso e estatísticas.</p>
+          <p>Basta digitar o título: o app busca pôster, sinopse, número de episódios e elenco no The Movie Database.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="pa-secao pa-secao--quente" aria-labelledby="titulo-telas">
+      <div class="pa-container">
+        <div class="pa-secao__cabeca">
+          <h2 class="pa-h2" id="titulo-telas">Telas</h2>
+          <span class="pa-regua"></span>
+        </div>
+        <div class="caso-telas">
+          <figure class="caso-tela caso-tela--grande">
+            <button class="caso-tela__botao" type="button" data-lupa aria-label="Ampliar: Coleção com pôsteres e notas"><img src="../assets/img/telas/dorama.webp" width="1600" height="1000" loading="lazy" alt="Coleção com pôsteres e notas"></button>
+            <figcaption>Coleção com pôsteres e notas</figcaption>
+          </figure>
+          <figure class="caso-tela">
+            <button class="caso-tela__botao" type="button" data-lupa aria-label="Ampliar: Estatísticas de tempo assistido, notas e status"><img src="../assets/img/telas/dorama-perfil.webp" width="1600" height="1000" loading="lazy" alt="Estatísticas de tempo assistido, notas e status"></button>
+            <figcaption>Estatísticas de tempo assistido, notas e status</figcaption>
+          </figure>
+          <figure class="caso-tela">
+            <button class="caso-tela__botao" type="button" data-lupa aria-label="Ampliar: Top 10 com as séries mais bem avaliadas"><img src="../assets/img/telas/dorama-top.webp" width="1600" height="1000" loading="lazy" alt="Top 10 com as séries mais bem avaliadas"></button>
+            <figcaption>Top 10 com as séries mais bem avaliadas</figcaption>
+          </figure>
+        </div>
+        <p class="caso-nota">Telas com dados de exemplo. Pôsteres do The Movie Database.</p>
+      </div>
+    </section>
+
+    <section class="pa-secao" aria-labelledby="titulo-funciona">
+      <div class="pa-container">
+        <div class="pa-secao__cabeca">
+          <h2 class="pa-h2" id="titulo-funciona">Como funciona</h2>
+          <span class="pa-regua"></span>
+        </div>
+        <ul class="caso-blocos">
+          <li class="caso-bloco">
+            <h3 class="pa-h4">Busca automática</h3>
+            <p>Um clique preenche pôster, sinopse, episódios e elenco a partir da API do TMDB.</p>
+          </li>
+          <li class="caso-bloco">
+            <h3 class="pa-h4">Progresso por episódio</h3>
+            <p>Uma barra mostra quanto falta, e a série é marcada como finalizada ao chegar ao último episódio.</p>
+          </li>
+          <li class="caso-bloco">
+            <h3 class="pa-h4">Painel de estatísticas</h3>
+            <p>Tempo assistido, média de notas e distribuição por status em um gráfico de rosca.</p>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="pa-secao pa-secao--quente" aria-labelledby="titulo-decisoes">
+      <div class="pa-container">
+        <div class="pa-secao__cabeca">
+          <h2 class="pa-h2" id="titulo-decisoes">Decisões técnicas</h2>
+          <span class="pa-regua"></span>
+        </div>
+        <ul class="caso-decisoes">
+          <li>
+            <h3 class="pa-h4">Banco local com SQLite</h3>
+            <p>A coleção fica em um banco SQLite na pasta de dados do Windows, que tem permissão de leitura e gravação mesmo com o app instalado.</p>
+          </li>
+          <li>
+            <h3 class="pa-h4">Conversa por IPC</h3>
+            <p>A interface pede e grava dados no processo principal do Electron por canais como get-doramas e update-dorama.</p>
+          </li>
+          <li>
+            <h3 class="pa-h4">Temas sem recarregar</h3>
+            <p>A cor escolhida muda variáveis CSS na hora e fica salva no LocalStorage.</p>
+          </li>
+          <li>
+            <h3 class="pa-h4">JavaScript puro</h3>
+            <p>A interface não usa framework. A única dependência de produção é o driver do SQLite, e o Chart.js entra pela página.</p>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <a class="caso-proximo" href="fii-tracker.html">
+      <span class="caso-proximo__fundo" style="background-image:url(../assets/img/fundos/fii.webp)"></span>
+      <span class="pa-container caso-proximo__texto">
+        <span class="pa-label">Próximo projeto</span>
+        <span class="pa-h2">FII Tracker</span>
+        <span class="caso-proximo__frase">Sua carteira de fundos imobiliários, sem nuvem</span>
+      </span>
+    </a>
+  </main>
+
+  <dialog class="lupa" id="lupa" aria-label="Tela ampliada">
+    <button class="pa-icone lupa__fechar" type="button" aria-label="Fechar imagem"><svg aria-hidden="true"><use href="#i-fechar"/></svg></button>
+    <img src="data:," alt="">
+  </dialog>
+
+  <footer class="rodape">
+    <div class="pa-container rodape__linha">
+      <a class="pa-marca" href="../index.html" aria-label="Voltar ao início">Angel<span class="pa-marca__o">o</span></a>
+      <p class="pa-secundario">© <span data-ano>2026</span> Angelo</p>
+      <div class="rodape__links">
+        <a class="pa-icone" href="https://github.com/AngeloJR-web" target="_blank" rel="noopener" aria-label="GitHub do Angelo"><svg aria-hidden="true"><use href="#i-github"/></svg></a>
+        <a class="pa-icone" href="https://www.linkedin.com/in/angelo-junior-9b7a9237a/" target="_blank" rel="noopener" aria-label="LinkedIn do Angelo"><svg aria-hidden="true"><use href="#i-linkedin"/></svg></a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

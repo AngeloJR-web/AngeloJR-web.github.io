@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://angelojr-web.github.io/sitemap.xml
