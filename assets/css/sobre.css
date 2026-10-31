@@ -1,0 +1,68 @@
+/* Página Sobre. A abertura e os blocos de texto vêm de projeto.css. */
+.caso-capa.sobre-foto { aspect-ratio: 4 / 5; view-transition-name: none; }
+.sobre-cta { display: grid; gap: var(--esp-3); }
+.sobre-cta .pa-corpo { color: var(--texto-200); }
+
+/* Resumo em blocos */
+.bento { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--esp-4); }
+.bento__bloco { position: relative; display: grid; align-content: end; gap: var(--esp-2); min-height: 176px; padding: var(--esp-5); overflow: hidden; border: 1px solid var(--linha-100); border-radius: var(--raio-2); background: var(--superficie-100); }
+.bento__bloco--imagem { grid-column: span 2; grid-row: span 2; isolation: isolate; color: var(--texto-100); text-decoration: none; }
+.bento__bloco--imagem img { position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%; object-fit: cover; object-position: center 34%; transition: transform 700ms var(--saida); }
+.bento__bloco--imagem::after { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, transparent 35%, var(--veu-capa) 100%); }
+.bento__bloco--imagem:hover img { transform: scale(1.04); }
+.bento__bloco--imagem .pa-label { color: var(--texto-100); }
+.bento__bloco--largo { grid-column: span 2; min-height: 148px; }
+.bento__numero { font-size: clamp(44px, 4.6vw, 64px); line-height: 1; font-weight: 600; letter-spacing: 0.02em; font-variant-numeric: tabular-nums; }
+.bento__temas { display: flex; flex-wrap: wrap; gap: var(--esp-2); margin: var(--esp-1) 0 0; padding: 0; list-style: none; }
+
+/* Linha do tempo: sem JavaScript, ou com movimento reduzido, fica a lista */
+.tempo { position: relative; scroll-margin-top: -72px; background: var(--fundo-000); }
+.tempo__palco { display: none; }
+.tempo__historia { padding-block: var(--esp-10); }
+.tempo__lista { display: grid; gap: var(--esp-7); margin: 0; padding: 0; list-style: none; }
+.tempo__item { display: grid; grid-template-columns: 120px minmax(0, 1fr); align-items: center; gap: var(--esp-6); }
+.tempo__item img { display: block; width: 100%; height: auto; border-radius: var(--raio-2); }
+.tempo__item div { display: grid; justify-items: start; gap: var(--esp-2); }
+.tempo__item time { font-size: 12px; line-height: 16px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--texto-200); }
+.tempo__item p { margin: 0; color: var(--texto-200); }
+
+/* O palco pede altura. Em celular deitado, a lista continua no lugar dele. */
+@media (min-height: 520px) {
+  .tempo.is-viva { height: calc(100svh + (var(--capitulos, 8) - 1) * 60svh); }
+  .tempo.is-viva .tempo__palco { position: sticky; top: 0; display: block; }
+  /* A lista segue para leitores de tela e teclado, sempre dentro da área visível. */
+  .tempo.is-viva .tempo__historia { position: sticky; top: 50%; bottom: 50%; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip-path: inset(50%); }
+}
+
+.tempo__palco .pa-hero { --altura: 100svh; }
+.tempo__rotulo { color: var(--texto-100); }
+.tempo__medidor { position: absolute; left: 50%; bottom: var(--esp-6); z-index: 5; display: flex; align-items: center; gap: var(--esp-3); width: min(280px, 60cqw); transform: translateX(-50%); }
+.tempo__contador { font-size: 12px; line-height: 16px; font-weight: 500; letter-spacing: 0.1em; font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--texto-200); }
+.tempo__barra { position: relative; flex: 1; height: var(--regua-altura); overflow: hidden; background: var(--linha-imagem); }
+.tempo__barra span { position: absolute; inset: 0; background: var(--texto-100); transform: scaleX(0); transform-origin: left; }
+
+/* Ferramentas por contexto */
+.contextos { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--linha-100); }
+.contextos li { display: grid; grid-template-columns: 3fr 5fr 4fr; align-items: baseline; gap: var(--esp-5); padding-block: var(--esp-4); border-bottom: 1px solid var(--linha-100); }
+.contextos p { margin: 0; color: var(--texto-200); }
+.contextos__provas { display: flex; flex-wrap: wrap; gap: var(--esp-1) var(--esp-4); }
+
+@container (max-width: 767px) {
+  .tempo__palco .pa-hero { --w: min(60cqw, calc((100svh - 320px) / 1.72)); }
+  .tempo__palco .pa-anel { height: calc(var(--w) * 1.72 + 48px); }
+  .tempo__palco .pa-hero__texto { bottom: 72px; }
+  .tempo__medidor { bottom: var(--esp-4); }
+}
+@media (max-width: 1199px) {
+  .contextos li { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .contextos__provas { grid-column: 1 / -1; }
+  .tempo__historia { padding-block: var(--esp-9); }
+}
+@media (max-width: 767px) {
+  .bento { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--esp-3); }
+  .bento__bloco { min-height: 148px; padding: var(--esp-4); }
+  .bento__bloco--imagem { grid-row: auto; min-height: 240px; }
+  .contextos li { grid-template-columns: minmax(0, 1fr); gap: var(--esp-1); }
+  .tempo__item { grid-template-columns: 88px minmax(0, 1fr); gap: var(--esp-4); }
+  .tempo__historia { padding-block: var(--esp-8); }
+}

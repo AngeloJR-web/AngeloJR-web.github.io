@@ -23,6 +23,8 @@ O site abre em <http://localhost:4173>.
 | Cores, espaços e medidas | `assets/css/tokens.css` |
 | Componentes do Design System | `assets/css/sistema.css` |
 | Partes próprias do site | `assets/css/site.css` |
+| Página Sobre | `sobre.html` e `assets/css/sobre.css` |
+| Linha do tempo da página Sobre | Cada `<li class="tempo__item">` do `sobre.html` vira um capítulo do anel |
 | Páginas de projeto | `projetos/`, com um HTML por projeto, e `assets/css/projeto.css` |
 | Telas das páginas de projeto | `assets/img/telas/`, em 1600 × 1000 |
 | Carrossel, menu e formulário | `assets/js/site.js` |

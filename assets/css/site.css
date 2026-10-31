@@ -140,6 +140,7 @@ main { display: block; }
 .sobre__foto { display: block; width: 100%; max-width: 280px; height: auto; aspect-ratio: 4 / 5; border-radius: var(--raio-2); box-shadow: var(--sombra-card); object-fit: cover; }
 .sobre__texto { display: grid; align-content: start; gap: var(--esp-4); justify-items: start; }
 .sobre__texto .projeto__stack { margin-top: var(--esp-2); }
+.sobre__mais { margin-top: var(--esp-3); }
 .prova { grid-template-columns: repeat(3, 1fr); margin-top: var(--esp-9); }
 
 /* Contato */
