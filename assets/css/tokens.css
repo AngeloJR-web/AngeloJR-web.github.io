@@ -1,0 +1,71 @@
+/* Tokens do Design System "Portfólio Angelo". */
+:root {
+  color-scheme: dark;
+  /* Cores */
+  --fundo-000: #0b0807;
+  --fundo-100: #120d09;
+  --superficie-100: #191718;
+  --superficie-200: #1b1c1f;
+  --superficie-300: #272625;
+  --vidro-nav: rgba(27, 28, 31, 0.78);
+  --vidro-claro: rgba(255, 255, 255, 0.08);
+  --vidro-seta: rgba(255, 255, 255, 0.25);
+  --veu-capa: rgba(11, 8, 7, 0.86);
+  --veu-tag: rgba(11, 8, 7, 0.32);
+  --linha-100: #36373a;
+  --linha-200: #7a7a80;
+  --linha-imagem: rgba(255, 255, 255, 0.4);
+  --texto-100: #fbfafb;
+  --texto-200: #c4c3c6;
+  --texto-300: #99989c;
+  --acento-100: #fa7d25;
+  --acento-200: #ff9a52;
+  --acento-300: #d9651a;
+  --sobre-acento: #ffffff;
+  --pessego-100: #ffd8ac;
+  --pessego-200: #dbb792;
+  --sobre-pessego: #2b1b0e;
+  --foco: var(--pessego-100);
+  --foco-sobre-pessego: var(--sobre-pessego);
+  --erro: #ff9088;
+  --sucesso: #63d8c6;
+  --desativado-texto: #77767a;
+  --imagem-petroleo: #095a5e;
+  --imagem-floresta: #213523;
+  --imagem-ceu: #7a8387;
+  /* Sombras */
+  --sombra-palco: 0 40px 40px -24px rgba(43, 27, 14, 0.28);
+  --sombra-card: 0 24px 48px rgba(0, 0, 0, 0.5);
+  --sombra-card-hover: 0 32px 56px rgba(0, 0, 0, 0.6);
+  /* Espaços */
+  --esp-1: 4px;
+  --esp-2: 8px;
+  --esp-3: 12px;
+  --esp-4: 16px;
+  --esp-5: 24px;
+  --esp-6: 32px;
+  --esp-7: 40px;
+  --esp-8: 56px;
+  --esp-9: 72px;
+  --esp-10: 120px;
+  /* Raios */
+  --raio-0: 0px;
+  --raio-1: 2px;
+  --raio-2: 4px;
+  --raio-pill: 999px;
+  --raio-circulo: 50%;
+  /* Medidas */
+  --container-max: 1320px;
+  --texto-max: 640px;
+  --lateral-desktop: 60px;
+  --lateral-tablet: 32px;
+  --lateral-mobile: 20px;
+  --altura-nav: 90px;
+  --altura-nav-mobile: 64px;
+  --altura-controle: 48px;
+  --altura-botao: 40px;
+  --regua-largura: 60px;
+  --regua-altura: 2px;
+  /* Fonte */
+  --font-sans: "Work Sans", "Segoe UI", system-ui, sans-serif;
+}

@@ -1,0 +1,366 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Angelo | Desenvolvedor de apps desktop</title>
+  <meta name="description" content="Portfólio do Angelo, estudante de Ciência da Computação que cria apps desktop nativos, ferramentas de automação e software com foco em segurança.">
+  <meta name="author" content="Angelo">
+  <meta name="theme-color" content="#0b0807">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Angelo | Desenvolvedor de apps desktop">
+  <meta property="og:description" content="Apps desktop nativos, automação e arquiteturas seguras.">
+  <link rel="canonical" href="https://angelojr-web.github.io/">
+  <meta property="og:url" content="https://angelojr-web.github.io/">
+  <meta property="og:image" content="https://angelojr-web.github.io/assets/img/og/inicio.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:locale" content="pt_BR">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600&display=swap">
+  <link rel="preload" as="image" href="assets/img/capas/angelo.webp">
+  <script>document.documentElement.classList.add('js');</script>
+  <link rel="stylesheet" href="assets/css/tokens.css">
+  <link rel="stylesheet" href="assets/css/sistema.css">
+  <link rel="stylesheet" href="assets/css/site.css">
+</head>
+<body>
+  <svg width="0" height="0" class="so-leitor" aria-hidden="true" focusable="false">
+    <symbol id="i-github" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.4 5.4 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></g></symbol>
+    <symbol id="i-linkedin" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></g></symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" d="M4 8h16M4 16h16"/></symbol>
+    <symbol id="i-fechar" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" d="M6 6l12 12M18 6L6 18"/></symbol>
+  </svg>
+
+  <a class="pular" href="#conteudo">Pular para o conteúdo</a>
+
+  <header class="pa-palco topo topo--abre">
+    <div class="pa-nav">
+      <a class="pa-marca" href="#inicio" aria-label="Angelo, início">Angel<span class="pa-marca__o">o</span></a>
+      <nav aria-label="Principal">
+        <ul class="pa-nav__links">
+          <li><a class="pa-nav__link" href="#inicio" aria-current="location">Início</a></li>
+          <li><a class="pa-nav__link" href="#projetos">Projetos</a></li>
+          <li><a class="pa-nav__link" href="#sobre">Sobre</a></li>
+          <li><a class="pa-nav__link" href="#contato">Contato</a></li>
+        </ul>
+      </nav>
+      <div class="pa-nav__fim">
+        <a class="pa-icone pa-icone--acao" href="https://github.com/AngeloJR-web" target="_blank" rel="noopener" aria-label="GitHub do Angelo"><svg aria-hidden="true"><use href="#i-github"/></svg></a>
+        <a class="pa-botao pa-botao--primario" href="#contato">Fale comigo</a>
+        <button class="pa-icone pa-nav__menu" type="button" aria-label="Abrir menu" aria-haspopup="dialog"><svg aria-hidden="true"><use href="#i-menu"/></svg></button>
+      </div>
+    </div>
+  </header>
+
+  <dialog class="menu" id="menu" aria-label="Menu">
+    <div class="menu__topo">
+      <a class="pa-marca" href="#inicio">Angel<span class="pa-marca__o">o</span></a>
+      <button class="pa-icone" type="button" data-fechar aria-label="Fechar menu"><svg aria-hidden="true"><use href="#i-fechar"/></svg></button>
+    </div>
+    <ul class="menu__links">
+      <li><a href="#inicio">Início</a></li>
+      <li><a href="#projetos">Projetos</a></li>
+      <li><a href="#sobre">Sobre</a></li>
+      <li><a href="#contato">Contato</a></li>
+    </ul>
+    <a class="pa-botao pa-botao--primario" href="#contato">Fale comigo</a>
+  </dialog>
+
+  <main id="conteudo">
+    <section class="pa-palco" id="inicio" aria-label="Apresentação">
+      <div class="pa-hero is-abrindo" data-hero
+        data-titulo="ANGELO|– DESENVOLVEDOR"
+        data-frase="Apps desktop nativos, automação e arquiteturas seguras"
+        data-tag="#Portfólio"
+        data-capa="assets/img/capas/angelo.webp"
+        data-fundo="assets/img/fundos/angelo.webp"
+        data-alt="Pôr do sol alaranjado sobre uma cadeia de montanhas"
+        data-link="#projetos"
+        data-rotulo="Ver projetos">
+        <div class="pa-hero__fundo is-on" style="background-image:url(assets/img/fundos/angelo.webp)"></div>
+        <div class="pa-hero__fundo"></div>
+        <div data-carrossel></div>
+        <h1 class="so-leitor">Angelo, desenvolvedor de apps desktop</h1>
+        <div class="pa-hero__texto" aria-live="polite">
+          <p class="pa-h1"><span class="linha"><span>ANGELO</span></span><span class="linha"><span>– DESENVOLVEDOR</span></span></p>
+          <span class="pa-regua"></span>
+          <p class="pa-destaque">Apps desktop nativos, automação e arquiteturas seguras</p>
+          <a class="pa-link" href="#projetos">Ver projetos</a>
+        </div>
+        <div class="pa-pontos" aria-hidden="true"></div>
+        <a class="rolar" href="#projetos" aria-label="Ir para os projetos"></a>
+      </div>
+    </section>
+
+    <section class="pa-secao" id="projetos" aria-labelledby="titulo-projetos">
+      <div class="pa-container">
+        <div class="pa-secao__cabeca">
+          <h2 class="pa-h2" id="titulo-projetos">Projetos</h2>
+          <span class="pa-regua"></span>
+          <p class="pa-corpo">Cinco apps para Windows. Todos guardam os dados no computador de quem usa.</p>
+        </div>
+
+        <div class="projetos">
+          <article class="projeto" id="vaultcore" data-pagina="projetos/vaultcore.html" data-fundo="assets/img/fundos/vaultcore.webp" data-titulo="VAULTCORE|– SENHAS" data-tag="#Rust">
+            <a class="pa-card" href="projetos/vaultcore.html" aria-label="Ver o projeto VaultCore">
+              <img class="pa-card__capa" src="assets/img/capas/vaultcore.webp" width="640" height="1104" loading="lazy" alt="Tela do VaultCore com a lista de senhas sobre uma paisagem de montanhas azuladas">
+              <span class="pa-tag">#Rust</span>
+            </a>
+            <div class="projeto__cabeca">
+              <h3 class="pa-h3">VaultCore</h3>
+              <p class="projeto__frase">Senhas guardadas só no seu computador</p>
+            </div>
+            <div class="projeto__texto">
+              <p>Gerenciador de senhas para Windows, sem conta e sem nuvem. O cofre fica cifrado no seu disco e o app se atualiza sozinho com pacotes assinados.</p>
+              <ul class="projeto__lista">
+                <li>Cofre com AES-256-GCM e chave derivada por Argon2id</li>
+                <li>Importa senhas do navegador e faz backup cifrado</li>
+                <li>Bloqueia sozinho e limpa a área de transferência</li>
+              </ul>
+              <ul class="projeto__stack" aria-label="Tecnologias">
+                <li class="pa-tag">Rust</li><li class="pa-tag">Tauri</li><li class="pa-tag">React</li><li class="pa-tag">TypeScript</li>
+              </ul>
+            </div>
+            <div class="projeto__acoes">
+              <a class="pa-botao pa-botao--secundario" href="projetos/vaultcore.html">Ver projeto</a>
+              <a class="pa-link" href="https://github.com/AngeloJR-web/vaultcore-releases/releases/latest" target="_blank" rel="noopener">Baixar para Windows</a>
+            </div>
+          </article>
+
+          <article class="projeto" id="master-dashboard" data-pagina="projetos/master-dashboard.html" data-fundo="assets/img/fundos/master.webp" data-titulo="MASTER DASHBOARD|– RPG" data-tag="#Tauri">
+            <a class="pa-card" href="projetos/master-dashboard.html" aria-label="Ver o projeto Master Dashboard">
+              <img class="pa-card__capa" src="assets/img/capas/master.webp" width="640" height="1104" loading="lazy" alt="Tela do Master Dashboard com as fichas dos agentes sobre um céu vermelho">
+              <span class="pa-tag">#Tauri</span>
+            </a>
+            <div class="projeto__cabeca">
+              <h3 class="pa-h3">Master Dashboard</h3>
+              <p class="projeto__frase">Mesa virtual para campanhas de Ordem Paranormal</p>
+            </div>
+            <div class="projeto__texto">
+              <p>App desktop para mestres de RPG conduzirem campanhas do sistema Ordem Paranormal, com tudo que a sessão precisa em uma tela só.</p>
+              <ul class="projeto__lista">
+                <li>Fichas que calculam vida, esforço e sanidade sozinhas</li>
+                <li>Palco 3D com os modelos dos personagens, feito com Three.js</li>
+                <li>Rolador de dados com histórico e inventário visual</li>
+              </ul>
+              <ul class="projeto__stack" aria-label="Tecnologias">
+                <li class="pa-tag">Tauri</li><li class="pa-tag">Rust</li><li class="pa-tag">React</li><li class="pa-tag">Three.js</li>
+              </ul>
+            </div>
+            <div class="projeto__acoes">
+              <a class="pa-botao pa-botao--secundario" href="projetos/master-dashboard.html">Ver projeto</a>
+              <a class="pa-link" href="https://github.com/AngeloJR-web/Master-Dashboard/releases/latest" target="_blank" rel="noopener">Baixar para Windows</a>
+            </div>
+          </article>
+
+          <article class="projeto" id="doramarank" data-pagina="projetos/doramarank.html" data-fundo="assets/img/fundos/dorama.webp" data-titulo="DORAMARANK|– SÉRIES" data-tag="#Electron">
+            <a class="pa-card" href="projetos/doramarank.html" aria-label="Ver o projeto DoramaRank">
+              <img class="pa-card__capa" src="assets/img/capas/dorama.webp" width="640" height="1104" loading="lazy" alt="Tela do DoramaRank com a coleção de pôsteres sobre uma paisagem rosada">
+              <span class="pa-tag">#Electron</span>
+            </a>
+            <div class="projeto__cabeca">
+              <h3 class="pa-h3">DoramaRank</h3>
+              <p class="projeto__frase">Seu catálogo pessoal de doramas</p>
+            </div>
+            <div class="projeto__texto">
+              <p>App desktop para acompanhar séries asiáticas. Ele busca pôster, sinopse e elenco no TMDB e guarda tudo em um banco local.</p>
+              <ul class="projeto__lista">
+                <li>Busca automática de dados pela API do TMDB</li>
+                <li>Painel com tempo assistido e média de notas</li>
+                <li>Progresso por episódio e temas personalizáveis</li>
+              </ul>
+              <ul class="projeto__stack" aria-label="Tecnologias">
+                <li class="pa-tag">Electron</li><li class="pa-tag">JavaScript</li><li class="pa-tag">SQLite</li><li class="pa-tag">Chart.js</li>
+              </ul>
+            </div>
+            <div class="projeto__acoes">
+              <a class="pa-botao pa-botao--secundario" href="projetos/doramarank.html">Ver projeto</a>
+              <a class="pa-link" href="https://github.com/AngeloJR-web/DoramaRank/releases/latest" target="_blank" rel="noopener">Baixar para Windows</a>
+            </div>
+          </article>
+
+          <article class="projeto" id="fii-tracker" data-pagina="projetos/fii-tracker.html" data-fundo="assets/img/fundos/fii.webp" data-titulo="FII TRACKER|– INVESTIMENTOS" data-tag="#Rust">
+            <a class="pa-card" href="projetos/fii-tracker.html" aria-label="Ver o projeto FII Tracker">
+              <img class="pa-card__capa" src="assets/img/capas/fii.webp" width="640" height="1104" loading="lazy" alt="Tela do FII Tracker com gráficos da carteira sobre uma baía azul-petróleo">
+              <span class="pa-tag">#Rust</span>
+            </a>
+            <div class="projeto__cabeca">
+              <h3 class="pa-h3">FII Tracker</h3>
+              <p class="projeto__frase">Sua carteira de fundos imobiliários, sem nuvem</p>
+            </div>
+            <div class="projeto__texto">
+              <p>App desktop para acompanhar fundos imobiliários, com cotações da B3 atualizadas em segundo plano e dados cifrados no seu computador.</p>
+              <ul class="projeto__lista">
+                <li>Preço médio, lucro e prejuízo calculados na hora</li>
+                <li>Livro-caixa de operações e controle de dividendos</li>
+                <li>Carteira gravada pelo Rust em um arquivo cifrado</li>
+              </ul>
+              <ul class="projeto__stack" aria-label="Tecnologias">
+                <li class="pa-tag">Tauri</li><li class="pa-tag">Rust</li><li class="pa-tag">JavaScript</li><li class="pa-tag">Chart.js</li>
+              </ul>
+            </div>
+            <div class="projeto__acoes">
+              <a class="pa-botao pa-botao--secundario" href="projetos/fii-tracker.html">Ver projeto</a>
+              <a class="pa-link" href="https://github.com/AngeloJR-web/FIIs-Organizer/releases/latest" target="_blank" rel="noopener">Baixar para Windows</a>
+            </div>
+          </article>
+
+          <article class="projeto" id="parcelas" data-pagina="projetos/parcelas.html" data-fundo="assets/img/fundos/parcelas.webp" data-titulo="PARCELAS|– FINANÇAS" data-tag="#TypeScript">
+            <a class="pa-card" href="projetos/parcelas.html" aria-label="Ver o projeto Parcelas">
+              <img class="pa-card__capa" src="assets/img/capas/parcelas.webp" width="640" height="1104" loading="lazy" alt="Tela do Parcelas com cartões e gráfico de gastos sobre montanhas douradas">
+              <span class="pa-tag">#TypeScript</span>
+            </a>
+            <div class="projeto__cabeca">
+              <h3 class="pa-h3">Parcelas</h3>
+              <p class="projeto__frase">Cada parcela do cartão no lugar certo</p>
+            </div>
+            <div class="projeto__texto">
+              <p>App desktop para controlar gastos no cartão de crédito: registra compras, divide as parcelas e mostra o que vem em cada fatura.</p>
+              <ul class="projeto__lista">
+                <li>Datas de fechamento e vencimento por cartão</li>
+                <li>Faturas mês a mês e gráfico de gastos do ano</li>
+                <li>Relatórios por categoria, com dados só no seu computador</li>
+              </ul>
+              <ul class="projeto__stack" aria-label="Tecnologias">
+                <li class="pa-tag">Electron</li><li class="pa-tag">React</li><li class="pa-tag">TypeScript</li><li class="pa-tag">SQLite</li>
+              </ul>
+            </div>
+            <div class="projeto__acoes">
+              <a class="pa-botao pa-botao--secundario" href="projetos/parcelas.html">Ver projeto</a>
+              <a class="pa-link" href="https://github.com/AngeloJR-web/Parcelas/releases/latest" target="_blank" rel="noopener">Baixar para Windows</a>
+            </div>
+          </article>
+        </div>
+
+        <div class="outros">
+          <h3 class="pa-h3">Outros projetos</h3>
+          <ul class="outros__lista">
+            <li>
+              <a class="pa-link" href="https://github.com/AngeloJR-web/anime-tracker" target="_blank" rel="noopener">Anime Tracker</a>
+              <p class="pa-secundario">Aplicação web para organizar animes, com busca no MyAnimeList e regras de negócio testadas.</p>
+              <p class="outros__stack">FastAPI, SQLAlchemy, Pytest</p>
+            </li>
+            <li>
+              <a class="pa-link" href="https://github.com/AngeloJR-web/ficha-ordem" target="_blank" rel="noopener">Painel Tático</a>
+              <p class="pa-secundario">Ficha automática de Ordem Paranormal que roda no navegador, sem instalar nada.</p>
+              <p class="outros__stack">HTML, CSS, JavaScript</p>
+            </li>
+            <li>
+              <a class="pa-link" href="https://github.com/AngeloJR-web/gerenciador-de-senhas" target="_blank" rel="noopener">Meu Cofre</a>
+              <p class="pa-secundario">Gerenciador de senhas local, com gerador de senhas e medidor de força.</p>
+              <p class="outros__stack">Tauri, Rust, JavaScript</p>
+            </li>
+            <li>
+              <a class="pa-link" href="https://github.com/AngeloJR-web/bot-monkeytype-python" target="_blank" rel="noopener">Monkeytype Auto-Typer</a>
+              <p class="pa-secundario">Bot que lê as palavras na tela e digita com intervalos aleatórios, como uma pessoa.</p>
+              <p class="outros__stack">Python, Selenium</p>
+            </li>
+            <li>
+              <a class="pa-link" href="https://angelojr-web.github.io/projeto-aincrad/" target="_blank" rel="noopener">Projeto Aincrad</a>
+              <p class="pa-secundario">Site temático de Sword Art Online, publicado no GitHub Pages.</p>
+              <p class="outros__stack">HTML</p>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="pa-secao pa-secao--quente" id="sobre" aria-labelledby="titulo-sobre">
+      <div class="pa-container">
+        <div class="sobre">
+          <div class="sobre__coluna">
+            <div class="pa-secao__cabeca">
+              <h2 class="pa-h2" id="titulo-sobre">Sobre</h2>
+              <span class="pa-regua"></span>
+            </div>
+            <img class="sobre__foto" src="assets/img/angelo.webp" width="480" height="600" loading="lazy" alt="Foto do Angelo">
+          </div>
+          <div class="sobre__texto">
+            <p class="pa-corpo">Sou o Angelo, estudante do 4º ano de Ciência da Computação. Gosto de construir software que roda direto na máquina da pessoa: rápido, nativo e com os dados sob o controle de quem usa.</p>
+            <p class="pa-corpo">Transito entre o baixo nível, com C++ e Rust, e o alto nível, com JavaScript e Python. Estou aberto a novas oportunidades e desafios, no Brasil ou fora dele.</p>
+            <ul class="projeto__stack" aria-label="Tecnologias que uso">
+              <li class="pa-tag">Rust</li><li class="pa-tag">C++</li><li class="pa-tag">Python</li><li class="pa-tag">JavaScript</li><li class="pa-tag">TypeScript</li><li class="pa-tag">React</li><li class="pa-tag">Tauri</li><li class="pa-tag">Electron</li>
+            </ul>
+          </div>
+        </div>
+        <ul class="pa-prova prova">
+          <li><span class="pa-prova__numero">7</span><span class="pa-secundario">apps com instalador para Windows</span></li>
+          <li><span class="pa-prova__numero">5</span><span class="pa-secundario">apps escritos com Rust e Tauri</span></li>
+          <li><span class="pa-prova__numero">4º</span><span class="pa-secundario">ano de Ciência da Computação</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="pa-secao pa-secao--pessego contato" id="contato" aria-labelledby="titulo-contato">
+      <div class="pa-container">
+        <div class="contato__painel">
+          <div class="contato__intro">
+            <h2 class="pa-h2" id="titulo-contato">Vamos conversar?</h2>
+            <span class="pa-regua"></span>
+            <p class="pa-corpo">Tem uma vaga, uma ideia ou uma dúvida sobre algum projeto? Escreva pelo formulário ou por um destes canais.</p>
+            <ul class="contato__canais">
+              <li>
+                <span class="pa-rotulo">E-mail</span>
+                <span class="contato__email"><a class="pa-link" href="mailto:angeloDev1@outlook.com">angeloDev1@outlook.com</a><button class="contato__copiar" type="button" data-copiar="angeloDev1@outlook.com">Copiar</button></span>
+              </li>
+              <li>
+                <span class="pa-rotulo">LinkedIn</span>
+                <a class="pa-link" href="https://www.linkedin.com/in/angelo-junior-9b7a9237a/" target="_blank" rel="noopener">angelo-junior</a>
+              </li>
+              <li>
+                <span class="pa-rotulo">GitHub</span>
+                <a class="pa-link" href="https://github.com/AngeloJR-web" target="_blank" rel="noopener">AngeloJR-web</a>
+              </li>
+            </ul>
+          </div>
+
+          <form class="pa-form" data-form data-email="angeloDev1@outlook.com" novalidate>
+            <div class="pa-campo">
+              <label class="pa-rotulo" for="nome">Seu nome</label>
+              <input class="pa-input" id="nome" name="nome" autocomplete="name" placeholder="Como posso te chamar?" required aria-describedby="nome-erro">
+              <span class="pa-ajuda pa-ajuda--erro" id="nome-erro" hidden>Escreva seu nome.</span>
+            </div>
+            <div class="pa-campo">
+              <label class="pa-rotulo" for="assunto">Assunto</label>
+              <span class="pa-select-caixa">
+                <select class="pa-select" id="assunto" name="assunto">
+                  <option>Oportunidade de trabalho</option>
+                  <option>Ideia de projeto</option>
+                  <option>Dúvida sobre um app</option>
+                  <option>Outro assunto</option>
+                </select>
+              </span>
+            </div>
+            <div class="pa-campo">
+              <label class="pa-rotulo" for="mensagem">Mensagem</label>
+              <textarea class="pa-textarea" id="mensagem" name="mensagem" placeholder="Conte o que você tem em mente" required aria-describedby="mensagem-erro"></textarea>
+              <span class="pa-ajuda pa-ajuda--erro" id="mensagem-erro" hidden>Escreva sua mensagem.</span>
+            </div>
+            <div class="pa-form__fim">
+              <button class="pa-botao pa-botao--primario" type="submit">Abrir no e-mail</button>
+              <span class="pa-ajuda pa-ajuda--sucesso" data-sucesso role="status" hidden>Seu app de e-mail abriu com a mensagem pronta. Se nada apareceu, use o endereço ao lado.</span>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="rodape">
+    <div class="pa-container rodape__linha">
+      <a class="pa-marca" href="#inicio" aria-label="Voltar ao início">Angel<span class="pa-marca__o">o</span></a>
+      <p class="pa-secundario">© <span data-ano>2026</span> Angelo</p>
+      <div class="rodape__links">
+        <a class="pa-icone" href="https://github.com/AngeloJR-web" target="_blank" rel="noopener" aria-label="GitHub do Angelo"><svg aria-hidden="true"><use href="#i-github"/></svg></a>
+        <a class="pa-icone" href="https://www.linkedin.com/in/angelo-junior-9b7a9237a/" target="_blank" rel="noopener" aria-label="LinkedIn do Angelo"><svg aria-hidden="true"><use href="#i-linkedin"/></svg></a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="assets/js/site.js"></script>
+</body>
+</html>
