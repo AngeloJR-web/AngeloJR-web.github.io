@@ -49,6 +49,17 @@
     estreito: [[0, 0, 0, 1], [1.08, -1, 30, 1], [1.7, -1.9, 46, 0], [2.2, -3, 60, 0]]
   };
 
+  // Coloca uma capa no ponto exato do anel, mesmo entre duas posições. O limite esconde quem fica atrás.
+  function aplicarPose(c, d, poses, limite) {
+    var lado = d < 0 ? -1 : 1, a = Math.min(Math.abs(d), poses.length - 1);
+    var k = Math.min(Math.floor(a), poses.length - 2), f = a - k, p = poses[k], q = poses[k + 1];
+    function entre(j) { return p[j] + (q[j] - p[j]) * f; }
+    var opacidade = Math.min(entre(3), 2 * (limite - Math.abs(d)));
+    c.style.transform = 'translateX(calc(var(--w) * ' + (lado * entre(0)).toFixed(4) + ')) translateZ(calc(var(--w) * ' + entre(1).toFixed(4) + ')) rotateY(' + (-lado * entre(2)).toFixed(2) + 'deg)';
+    c.style.opacity = opacidade.toFixed(3);
+    c.style.pointerEvents = opacidade < 0.2 ? 'none' : '';
+  }
+
   function curvaSuave(t) { return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
   function curvaSaida(t) { return 1 - Math.pow(1 - t, 3); }
 
@@ -101,18 +112,9 @@
       return d;
     }
 
-    // Coloca cada capa no ponto exato do anel, mesmo entre duas posições.
     function pintar() {
       var poses = raiz.clientWidth < 768 ? POSES.estreito : POSES.amplo;
-      cards.forEach(function (c, i) {
-        var d = desvio(i), lado = d < 0 ? -1 : 1, a = Math.min(Math.abs(d), poses.length - 1);
-        var k = Math.min(Math.floor(a), poses.length - 2), f = a - k, p = poses[k], q = poses[k + 1];
-        function entre(j) { return p[j] + (q[j] - p[j]) * f; }
-        var opacidade = Math.min(entre(3), 2 * (n / 2 - Math.abs(d)));
-        c.style.transform = 'translateX(calc(var(--w) * ' + (lado * entre(0)).toFixed(4) + ')) translateZ(calc(var(--w) * ' + entre(1).toFixed(4) + ')) rotateY(' + (-lado * entre(2)).toFixed(2) + 'deg)';
-        c.style.opacity = opacidade.toFixed(3);
-        c.style.pointerEvents = opacidade < 0.2 ? 'none' : '';
-      });
+      cards.forEach(function (c, i) { aplicarPose(c, desvio(i), poses, n / 2); });
     }
 
     // Gira o anel até o destino em um só movimento, passando pelas posições do meio.
@@ -286,10 +288,130 @@
     }).observe(hero);
   }
 
+  // Linha do tempo: a rolagem gira o anel de capítulo em capítulo. Sem isso, a lista da página continua legível.
+  function iniciarTrajetoria() {
+    var secao = document.querySelector('[data-trajetoria]');
+    if (!secao || menosMovimento) return;
+    var palco = secao.querySelector('.tempo__palco'), anel = palco.querySelector('.pa-anel'), cena = palco.querySelector('.pa-anel__cena');
+    var fundos = palco.querySelectorAll('.pa-hero__fundo'), texto = palco.querySelector('.pa-hero__texto');
+    var linhas = texto.querySelectorAll('.linha > span'), frase = texto.querySelector('.pa-destaque'), link = texto.querySelector('.pa-link');
+    var contador = palco.querySelector('.tempo__contador'), barra = palco.querySelector('.tempo__barra span');
+    var itens = Array.prototype.slice.call(secao.querySelectorAll('.tempo__item'));
+    var n = itens.length, ativo = 0, visual = 0, ligado = 0, quadroId = 0, espera = 0;
+
+    var capitulos = itens.map(function (li) {
+      var a = li.querySelector('a');
+      return { titulo: li.dataset.titulo.split('|'), frase: li.querySelector('p').textContent, link: a.getAttribute('href'), externo: a.target === '_blank', rotulo: a.textContent, capa: li.dataset.capa, fundo: li.dataset.fundo, tag: li.dataset.tag };
+    });
+
+    function escrever(c, i) {
+      linhas[0].textContent = c.titulo[0];
+      linhas[1].textContent = c.titulo[1];
+      frase.textContent = c.frase;
+      link.textContent = c.rotulo;
+      link.href = c.link;
+      link.target = c.externo ? '_blank' : '';
+      link.rel = c.externo ? 'noopener' : '';
+      contador.textContent = (i + 1) + ' de ' + n;
+    }
+
+    // Só a capa do centro segue para a página do projeto, e só quando a página é deste site.
+    function passarCapa() {
+      if (!capitulos[ativo].externo) cards[ativo].style.viewTransitionName = 'capa';
+    }
+
+    function curso() { return secao.offsetHeight - window.innerHeight; }
+    function irPara(i) {
+      if (palco.offsetHeight) window.scrollTo({ top: secao.offsetTop + curso() * i / (n - 1), behavior: 'smooth' });
+    }
+
+    var cards = capitulos.map(function (c, i) {
+      var card = document.createElement('a'), img = document.createElement('img'), tag = document.createElement('span');
+      card.className = 'pa-anel__card';
+      card.href = c.link;
+      card.tabIndex = -1;
+      card.draggable = false;
+      if (c.externo) { card.target = '_blank'; card.rel = 'noopener'; }
+      img.src = c.capa;
+      img.alt = '';
+      img.draggable = false;
+      tag.className = 'pa-tag';
+      tag.textContent = c.tag;
+      card.appendChild(img);
+      card.appendChild(tag);
+      card.addEventListener('click', function (e) {
+        if (i !== ativo) { e.preventDefault(); irPara(i); }
+        else passarCapa();
+      });
+      cena.appendChild(card);
+      new Image().src = c.fundo;
+      return card;
+    });
+
+    function mudarPara(i) {
+      ativo = i;
+      cards.forEach(function (c, k) { c.dataset.pos = Math.max(-3, Math.min(3, k - i)); });
+      var novo = fundos[1 - ligado];
+      novo.style.backgroundImage = 'url(' + capitulos[i].fundo + ')';
+      novo.classList.add('is-on');
+      fundos[ligado].classList.remove('is-on');
+      ligado = 1 - ligado;
+      texto.classList.add('is-trocando');
+      clearTimeout(espera);
+      espera = setTimeout(function () {
+        escrever(capitulos[i], i);
+        texto.classList.add('is-preparando');
+        texto.classList.remove('is-trocando');
+        texto.getBoundingClientRect();
+        texto.classList.remove('is-preparando');
+      }, 300);
+    }
+
+    // A curva segura cada capítulo por um instante antes de o anel seguir para o próximo.
+    function pintar() {
+      var base = Math.floor(visual), f = visual - base, parado = base + f * f * (3 - 2 * f);
+      var poses = anel.clientWidth < 768 ? POSES.estreito : POSES.amplo;
+      cards.forEach(function (c, i) { aplicarPose(c, i - parado, poses, Infinity); });
+    }
+
+    function quadro() {
+      var alvo = Math.max(0, Math.min(1, -secao.getBoundingClientRect().top / curso())) * (n - 1);
+      visual += (alvo - visual) * 0.14;
+      if (Math.abs(alvo - visual) < 0.001) visual = alvo;
+      pintar();
+      barra.style.transform = 'scaleX(' + (alvo / (n - 1)).toFixed(4) + ')';
+      if (Math.round(alvo) !== ativo) mudarPara(Math.round(alvo));
+      quadroId = visual === alvo ? 0 : requestAnimationFrame(quadro);
+    }
+
+    function acordar() { if (!quadroId) quadroId = requestAnimationFrame(quadro); }
+
+    secao.style.setProperty('--capitulos', n);
+    secao.classList.add('is-viva');
+    anel.classList.add('is-girando');
+    fundos[0].style.backgroundImage = 'url(' + capitulos[0].fundo + ')';
+    cards.forEach(function (c, k) { c.dataset.pos = Math.min(3, k); });
+    escrever(capitulos[0], 0);
+
+    link.addEventListener('click', passarCapa);
+
+    // Quem navega pelo teclado passa pelos links da lista, e o anel acompanha.
+    itens.forEach(function (li, i) {
+      var a = li.querySelector('a');
+      a.addEventListener('focus', function () { link.classList.add('is-foco'); irPara(i); });
+      a.addEventListener('blur', function () { link.classList.remove('is-foco'); });
+    });
+
+    window.addEventListener('scroll', acordar, { passive: true });
+    window.addEventListener('resize', acordar);
+    pintar();
+    acordar();
+  }
+
   // Cada bloco entra uma vez só, quando chega à tela.
   function iniciarRevelacao() {
     if (menosMovimento) return;
-    var seletor = '.pa-secao__cabeca > *, .sobre__foto, .projeto__cabeca, .projeto__texto > *, .projeto__acoes, .outros > h3, .outros__lista li, .sobre__texto > *, .prova li, .contato__painel, .contato__intro > *, .pa-form > *, .caso-texto > *, .caso-futuro li, .caso-tela, .caso-nota, .caso-bloco, .caso-decisoes li';
+    var seletor = '.pa-secao__cabeca > *, .sobre__foto, .bento__bloco, .contextos li, .sobre-cta, .projeto__cabeca, .projeto__texto > *, .projeto__acoes, .outros > h3, .outros__lista li, .sobre__texto > *, .prova li, .contato__painel, .contato__intro > *, .pa-form > *, .caso-texto > *, .caso-futuro li, .caso-tela, .caso-nota, .caso-bloco, .caso-decisoes li';
     var olho = new IntersectionObserver(function (itens) {
       itens.forEach(function (item) {
         if (!item.isIntersecting) return;
@@ -422,16 +544,20 @@
       itens.forEach(function (item) {
         if (!item.isIntersecting) return;
         links.forEach(function (a) {
-          if (a.getAttribute('href') === '#' + item.target.id) a.setAttribute('aria-current', 'location');
+          var alvo = a.dataset.secao ? '#' + a.dataset.secao : a.getAttribute('href');
+          if (alvo === '#' + item.target.id) a.setAttribute('aria-current', 'location');
           else a.removeAttribute('aria-current');
         });
         moverIndicador();
       });
     }, { rootMargin: '-45% 0px -50% 0px' });
-    ['inicio', 'projetos', 'sobre', 'contato'].forEach(function (id) {
-      var secao = document.getElementById(id);
-      if (secao) espiao.observe(secao);
-    });
+    // Em uma página própria, como a Sobre, o link marcado não muda com a rolagem.
+    if (!barra.querySelector('[aria-current="page"]')) {
+      ['inicio', 'projetos', 'sobre', 'contato'].forEach(function (id) {
+        var secao = document.getElementById(id);
+        if (secao) espiao.observe(secao);
+      });
+    }
 
     // Um único botão laranja por tela: o do topo sai de cena perto do formulário.
     var contato = document.getElementById('contato');
@@ -518,7 +644,7 @@
       });
     });
     window.addEventListener('pageshow', function () {
-      document.querySelectorAll('.projeto .pa-card').forEach(function (c) { c.style.viewTransitionName = ''; });
+      document.querySelectorAll('.projeto .pa-card, .tempo .pa-anel__card').forEach(function (c) { c.style.viewTransitionName = ''; });
     });
   }
 
@@ -527,6 +653,7 @@
     iniciarHero();
     iniciarProfundidade();
   }
+  iniciarTrajetoria();
   setTimeout(function () {
     document.querySelectorAll('.is-abrindo').forEach(function (el) { el.classList.remove('is-abrindo'); });
   }, 2300);
