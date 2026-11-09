@@ -1,7 +1,11 @@
-// Carrossel do Início: monta os cartões a partir dos slides do HTML e posiciona tudo com a geometria medida.
-import { chegada, descobrir } from './comum.js';
+// Carrossel do Início: monta os cartões a partir dos slides do HTML, posiciona tudo com a geometria
+// medida e anima a troca de slide com os tempos e as curvas do vídeo (spec 7.1).
+import { chegada, descobrir, reduzirMovimento } from './comum.js';
 import { criarCarrossel, numeroRomano } from './estado.js';
 import { calcularCartoes } from './geometria.js';
+import { cronograma } from './cronograma.js';
+
+const { gsap, SplitText } = window;
 
 const palco = document.querySelector('.palco');
 const artigos = [...palco.querySelectorAll('.slide')];
@@ -9,6 +13,8 @@ const total = artigos.length;
 
 // Telas em pé precisam cobrir a altura (foto 16:9 → 178vh de largura); num notebook, 1600 px bastam.
 const TAMANHOS = '(orientation: portrait) 178vh, (min-width: 1600px) 117vw, min(117vw, 1600px)';
+// Quanto o texto desce para sumir na máscara (a máscara tem uma folga de .15em para os acentos).
+const ESCONDIDO = 120;
 
 export const slides = artigos.map(el => ({
   el,
@@ -88,6 +94,8 @@ const etiqueta = document.querySelector('.lateral__etiqueta');
 const botao = document.querySelector('.segurar');
 const anuncio = document.getElementById('anuncio');
 document.querySelector('.paginacao__total').textContent = numeroRomano(total);
+// O GSAP passa a cuidar do transform da etiqueta (centralizada e girada), para poder animá-la.
+gsap.set(etiqueta, { xPercent: -50, yPercent: -50, rotation: 180 });
 
 // Numeral da paginação e etiqueta vertical (trocam no meio do deslize).
 export function trocarNumeral(i) {
@@ -108,6 +116,168 @@ export function trocarSlideAtivo(i, { anunciar = true } = {}) {
   if (anunciar) anuncio.textContent = `${i + 1} de ${total}: ${slides[i].nome}`;
 }
 
+/* ---------- Textos separados em palavras e linhas, cada um dentro de uma máscara ---------- */
+
+const textos = slides.map(s => ({ linha: s.el.querySelector('.slide__linha'), titulo: null, cima: null, negrito: null, texto: null }));
+let pronto = false;
+
+// Folga na máscara para acentos e letras que passam da caixa (ex.: "Á" em "OLÁ").
+const folgar = mascaras => gsap.set(mascaras, { paddingBlock: '.15em', marginBlock: '-.15em' });
+
+function separar() {
+  for (const [i, s] of slides.entries()) {
+    const visivel = () => (i === visual.atual ? 0 : ESCONDIDO);
+    const t = textos[i];
+    t.titulo = SplitText.create(s.el.querySelector('.slide__titulo a'), { type: 'words', mask: 'words', aria: 'auto' });
+    folgar(t.titulo.masks);
+    gsap.set(t.titulo.words, { yPercent: visivel() });
+    for (const parte of ['cima', 'negrito', 'texto']) {
+      t[parte] = SplitText.create(s.el.querySelector(`.slide__${parte}`), {
+        type: 'lines', mask: 'lines', aria: 'auto', autoSplit: true,
+        onSplit(self) {
+          folgar(self.masks);
+          gsap.set(self.lines, { yPercent: visivel() });
+        },
+      });
+    }
+    gsap.set(t.linha, { opacity: i === visual.atual ? 1 : 0 });
+  }
+  pronto = true;
+}
+
+const linhas = (i, parte) => textos[i][parte].lines;
+
+// Entrada do texto do slide i (spec 7.1, etapa 6), com tempos relativos ao começo da entrada.
+export function entrarTexto(i) {
+  const t = textos[i];
+  const c = cronograma({ palavrasSai: 1, palavrasEntra: t.titulo.words.length });
+  const e = c.entrada;
+  const rel = parte => parte.inicio - e.inicio;
+  const tl = gsap.timeline();
+  tl.fromTo(t.linha, { opacity: 0 }, { opacity: 1, duration: e.linha.duracao }, rel(e.linha));
+  t.titulo.words.forEach((palavra, k) => {
+    tl.fromTo(palavra, { yPercent: ESCONDIDO }, { yPercent: 0, duration: e.palavras[k].duracao, ease: 'power3.out' }, rel(e.palavras[k]));
+  });
+  tl.fromTo(linhas(i, 'cima'), { yPercent: ESCONDIDO }, { yPercent: 0, duration: e.cima.duracao, ease: 'power3.out' }, rel(e.cima));
+  tl.fromTo(linhas(i, 'negrito'), { yPercent: ESCONDIDO }, { yPercent: 0, duration: e.negrito.duracao, ease: 'power3.out' }, rel(e.negrito));
+  tl.fromTo(linhas(i, 'texto'), { yPercent: ESCONDIDO }, { yPercent: 0, duration: e.texto.duracao, ease: 'power3.out' }, rel(e.texto));
+  return tl;
+}
+
+/* ---------- Troca de slide ---------- */
+
+let troca = null;
+let medicao = null;
+const ouvintesTextoEntrou = [];
+
+export function quandoTextoEntrar(funcao) {
+  ouvintesTextoEntrou.push(funcao);
+}
+
+function reindexar(para) {
+  visual.atual = para;
+  visual.deslocamento = 0;
+  posicionar();
+  trocarSlideAtivo(para);
+}
+
+function fimDaTroca(para) {
+  troca = null;
+  medicao?.fim();
+  history.replaceState(null, '', `#${slides[para].id}`);
+  carregarFotos(2);
+  const proxima = estado.concluir();
+  for (const funcao of ouvintesTextoEntrou) funcao();
+  if (proxima) executarTroca(proxima);
+}
+
+function executarTroca({ de, para, passos }) {
+  // Fotos do caminho todo (saltos pelo menu) e dos vizinhos do destino.
+  carregarFotos(Math.abs(passos) + 1, de);
+  carregarFotos(1, para);
+  if (reduzirMovimento) {
+    trocarSemMovimento(de, para);
+    return;
+  }
+
+  const sai = textos[de];
+  const c = cronograma({ palavrasSai: sai.titulo.words.length, palavrasEntra: textos[para].titulo.words.length });
+  const tl = gsap.timeline({ onComplete: () => fimDaTroca(para) });
+
+  // 1. Texto sai: cada palavra desce na máscara; depois a linha de cima, o negrito e o parágrafo.
+  sai.titulo.words.forEach((palavra, k) => {
+    tl.to(palavra, { yPercent: ESCONDIDO, duration: c.saida.palavras[k].duracao, ease: 'power2.in' }, c.saida.palavras[k].inicio);
+  });
+  tl.to(linhas(de, 'cima'), { yPercent: ESCONDIDO, duration: c.saida.cima.duracao, ease: 'power2.in' }, c.saida.cima.inicio);
+  tl.to([...linhas(de, 'negrito'), ...linhas(de, 'texto')], { yPercent: ESCONDIDO, duration: c.saida.resto.duracao, ease: 'power2.in' }, c.saida.resto.inicio);
+  tl.to(sai.linha, { opacity: 0, duration: c.saida.linha.duracao }, c.saida.linha.inicio);
+
+  // 3. Foto vira cartão.
+  tl.to(visual, { abertura: 0, duration: c.encolher.duracao, ease: 'encolher', onUpdate: posicionar }, c.encolher.inicio);
+
+  // 4. Cartões deslizam; numeral e etiqueta trocam entre 24% e 42% do deslize.
+  tl.to(visual, { deslocamento: passos, duration: c.deslizar.duracao, ease: 'deslizar', onUpdate: posicionar }, c.deslizar.inicio);
+  const ns = c.deslizar.numeralSai;
+  const ne = c.deslizar.numeralEntra;
+  tl.to(numeral, { yPercent: ESCONDIDO, duration: ns.duracao, ease: 'power2.in' }, ns.inicio);
+  tl.to(etiqueta, { opacity: 0, y: () => 0.2 * etiqueta.offsetHeight, duration: ns.duracao, ease: 'power2.in' }, ns.inicio);
+  tl.call(() => trocarNumeral(para), null, ne.inicio);
+  tl.fromTo(numeral, { yPercent: ESCONDIDO }, { yPercent: 0, duration: ne.duracao, ease: 'power3.out', immediateRender: false }, ne.inicio);
+  tl.fromTo(etiqueta, { opacity: 0, y: () => -0.2 * etiqueta.offsetHeight }, { opacity: 1, y: 0, duration: ne.duracao, ease: 'power3.out', immediateRender: false }, ne.inicio);
+  tl.call(() => reindexar(para), null, c.deslizar.inicio + c.deslizar.duracao);
+
+  // 5. Cartão cresce.
+  tl.fromTo(visual, { abertura: 0 }, { abertura: 1, duration: c.crescer.duracao, ease: 'crescer', onUpdate: posicionar, immediateRender: false }, c.crescer.inicio);
+
+  // 6. Texto entra.
+  tl.add(entrarTexto(para), c.entrada.inicio);
+
+  troca = tl;
+  medicao?.inicio({ t0: performance.now(), de, para, passos, c, linhaDoTempo: tl });
+}
+
+// "Reduzir movimento": esmaecimento de 0,3 s entre o slide atual e o novo, sem máscara nem parallax.
+function trocarSemMovimento(de, para) {
+  const velho = slides[de];
+  const novo = slides[para];
+  const t = textos[para];
+  gsap.set([...t.titulo.words, ...linhas(para, 'cima'), ...linhas(para, 'negrito'), ...linhas(para, 'texto')], { yPercent: 0 });
+  gsap.set(t.linha, { opacity: 1 });
+  visual.abertura = 1;
+  reindexar(para);
+  trocarNumeral(para);
+  // O cartão velho fica por cima, em tela cheia, enquanto esmaece.
+  Object.assign(velho.cartao.style, { transform: 'translateX(0px)', clipPath: 'inset(0px)', visibility: 'visible', zIndex: '2' });
+  velho.el.style.visibility = 'visible';
+  const tl = gsap.timeline({
+    onComplete: () => {
+      gsap.set([velho.cartao, velho.el], { clearProps: 'opacity,zIndex,visibility' });
+      posicionar();
+      fimDaTroca(para);
+    },
+  });
+  tl.fromTo([velho.cartao, velho.el], { opacity: 1 }, { opacity: 0, duration: 0.3 }, 0);
+  tl.fromTo([novo.cartao, novo.el], { opacity: 0 }, { opacity: 1, duration: 0.3 }, 0);
+  troca = tl;
+}
+
+// Única porta de entrada para trocar de slide.
+export function comando(alvo) {
+  if (!pronto) return;
+  const resposta = estado.pedir(alvo);
+  if (resposta.resposta === 'iniciar') executarTroca(resposta);
+}
+
+const TECLAS = { ArrowRight: 1, ArrowDown: 1, PageDown: 1, ArrowLeft: -1, ArrowUp: -1, PageUp: -1 };
+document.addEventListener('keydown', evento => {
+  const alvo = TECLAS[evento.key];
+  if (!alvo || evento.defaultPrevented || evento.altKey || evento.ctrlKey || evento.metaKey || evento.shiftKey) return;
+  const campo = evento.target instanceof Element && evento.target.closest('input, textarea, select, [contenteditable]');
+  if (document.getElementById('menu').open || campo) return;
+  evento.preventDefault();
+  comando(alvo);
+});
+
 /* ---------- Início ---------- */
 
 trocarNumeral(visual.atual);
@@ -119,5 +289,13 @@ addEventListener('load', () => carregarFotos(1), { once: true });
 // posicionar() mexe em 6 elementos: dá para chamar direto em cada evento (inclusive no meio de uma troca).
 addEventListener('resize', posicionar);
 addEventListener('orientationchange', posicionar);
+
+const modoMedir = new URLSearchParams(location.search).get('medir');
+if (modoMedir !== null) {
+  import('./medir.js').then(m => { medicao = m.iniciar({ slides, palco, textos, modo: modoMedir === 'tempo-real' ? 'tempo-real' : 'passo' }); });
+  window.__carrossel = { estado, visual, comando, get troca() { return troca; } };
+}
+
+document.fonts.ready.then(separar);
 
 if (chegada === 'preta') descobrir();
