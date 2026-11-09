@@ -1,11 +1,12 @@
 // Carrossel do Início: monta os cartões a partir dos slides do HTML, posiciona tudo com a geometria
 // medida e anima a troca de slide com os tempos e as curvas do vídeo (spec 7.1).
-import { chegada, descobrir, reduzirMovimento } from './comum.js';
-import { criarCarrossel, numeroRomano } from './estado.js';
+import { chegada, descobrir, fecharMenu, reduzirMovimento } from './comum.js';
+import { criarCarrossel, criarFiltroDeGesto, numeroRomano } from './estado.js';
 import { calcularCartoes } from './geometria.js';
 import { cronograma } from './cronograma.js';
+import { criarGiro } from './giro.js';
 
-const { gsap, SplitText } = window;
+const { gsap, SplitText, Observer } = window;
 
 const palco = document.querySelector('.palco');
 const artigos = [...palco.querySelectorAll('.slide')];
@@ -261,11 +262,84 @@ function trocarSemMovimento(de, para) {
   troca = tl;
 }
 
+// Giro automático: avança 6 s depois que o texto entra e para de vez na primeira interação (spec 8).
+const giro = reduzirMovimento ? null : criarGiro({ espera: 6000 });
+
 // Única porta de entrada para trocar de slide.
-export function comando(alvo) {
+export function comando(alvo, { automatico = false } = {}) {
   if (!pronto) return;
+  if (!automatico) giro?.interagiu();
   const resposta = estado.pedir(alvo);
   if (resposta.resposta === 'iniciar') executarTroca(resposta);
+}
+
+function avisarTextoEntrou() {
+  for (const funcao of ouvintesTextoEntrou) funcao();
+}
+
+/* ---------- Gestos: roda, trackpad, arrasto e toque (cada gesto vale um slide) ---------- */
+
+const filtro = criarFiltroDeGesto({ silencio: 200 });
+let ultimoArrasto = -Infinity;
+const gesto = direcao => {
+  if (filtro.aceitar(performance.now())) comando(direcao);
+};
+const marcarArrasto = () => { ultimoArrasto = performance.now(); };
+
+// wheelSpeed −1: roda para baixo e arrasto para cima viram o mesmo onUp (avançar).
+// debounce false: cada evento chega na hora, sem esperar o próximo quadro (que para com a aba escondida).
+Observer.create({
+  target: window,
+  type: 'wheel,touch,pointer',
+  wheelSpeed: -1,
+  tolerance: 10,
+  dragMinimum: 10,
+  preventDefault: true,
+  debounce: false,
+  ignore: '.segurar, .topo, .sociais, .menu',
+  onUp: () => gesto(1),
+  onLeft: () => gesto(1),
+  onDown: () => gesto(-1),
+  onRight: () => gesto(-1),
+  onDragStart: marcarArrasto,
+  onDrag: marcarArrasto,
+  onDragEnd: marcarArrasto,
+});
+
+// Um arrasto que começa no título (que é um link) troca o slide e não abre o link.
+document.addEventListener('click', evento => {
+  const noTitulo = evento.target instanceof Element && evento.target.closest('.slide__titulo a');
+  if (noTitulo && performance.now() - ultimoArrasto < 300) {
+    evento.preventDefault();
+    evento.stopImmediatePropagation();
+  }
+}, true);
+
+// No Início, escolher um slide no menu fecha o menu e vai direto até ele.
+document.getElementById('menu').addEventListener('click', async evento => {
+  const link = evento.target instanceof Element && evento.target.closest('[data-slide]');
+  if (!link) return;
+  evento.preventDefault();
+  await fecharMenu();
+  comando({ indice: slides.findIndex(s => s.id === link.dataset.slide) });
+});
+
+if (giro) {
+  quandoTextoEntrar(() => {
+    giro.textoEntrou(performance.now());
+    if (document.hidden) giro.pausar(performance.now());
+  });
+  gsap.ticker.add(() => {
+    if (giro.deveAvancar(performance.now())) comando(1, { automatico: true });
+  });
+  const parar = () => giro.interagiu();
+  for (const tipo of ['pointerdown', 'wheel', 'keydown', 'touchstart', 'focusin']) {
+    document.addEventListener(tipo, parar, { capture: true, passive: true });
+  }
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) giro.pausar(performance.now());
+    else giro.retomar(performance.now());
+  });
 }
 
 const TECLAS = { ArrowRight: 1, ArrowDown: 1, PageDown: 1, ArrowLeft: -1, ArrowUp: -1, PageUp: -1 };
@@ -296,6 +370,10 @@ if (modoMedir !== null) {
   window.__carrossel = { estado, visual, comando, get troca() { return troca; } };
 }
 
-document.fonts.ready.then(separar);
+// Por enquanto o texto inicial já aparece pronto; a abertura animada do site avisa no fim dela.
+document.fonts.ready.then(() => {
+  separar();
+  avisarTextoEntrou();
+});
 
 if (chegada === 'preta') descobrir();
