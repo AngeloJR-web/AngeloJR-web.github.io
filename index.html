@@ -22,6 +22,8 @@
   <script>document.documentElement.classList.add('js');try{if(sessionStorage.getItem('chegada')==='preta')document.documentElement.classList.add('chegou-preta')}catch(e){}</script>
   <link rel="stylesheet" href="assets/css/tokens.css">
   <link rel="stylesheet" href="assets/css/comum.css">
+  <link rel="stylesheet" href="assets/css/inicio.css">
+  <link rel="preload" as="image" imagesrcset="assets/img/slides/angelo-960.webp 960w, assets/img/slides/angelo-1600.webp 1600w, assets/img/slides/angelo-2400.webp 2400w" imagesizes="(orientation: portrait) 178vh, (min-width: 1600px) 117vw, min(117vw, 1600px)" fetchpriority="high">
 </head>
 <body data-pagina="inicio">
   <svg class="so-leitor" aria-hidden="true" focusable="false">
@@ -82,7 +84,7 @@
     <h1 class="so-leitor">Angelo, desenvolvedor de apps desktop</h1>
 
     <section class="palco" id="slides" aria-roledescription="carrossel" aria-label="Projetos do Angelo">
-      <article class="slide" id="angelo" data-nome="Apresentação" data-etiqueta="Apresentação" data-abre="sobre.html" data-foto="assets/img/slides/angelo" data-foco="50% 50%" data-materia-titulo="Angelo, desenvolvedor de apps desktop" data-materia-italico="Sou estudante do 4º ano de Ciência da Computação e construo apps desktop que rodam direto na máquina da pessoa, com os dados sob o controle de quem usa.">
+      <article class="slide" id="angelo" style="--escurecer: .5" data-nome="Apresentação" data-etiqueta="Apresentação" data-abre="sobre.html" data-foto="assets/img/slides/angelo" data-foco="50% 50%" data-materia-titulo="Angelo, desenvolvedor de apps desktop" data-materia-italico="Sou estudante do 4º ano de Ciência da Computação e construo apps desktop que rodam direto na máquina da pessoa, com os dados sob o controle de quem usa.">
         <p class="slide__cima">Olá, eu sou o</p>
         <h2 class="slide__titulo"><a href="sobre.html">Angelo</a></h2>
         <span class="slide__linha" aria-hidden="true"></span>
@@ -138,7 +140,7 @@
         <circle class="segurar__anel" cx="50" cy="50" r="49"/>
         <circle class="segurar__disco" cx="50" cy="50" r="40"/>
         <circle class="segurar__progresso" cx="50" cy="50" r="49" pathLength="1"/>
-        <line class="segurar__diagonal" x1="0" y1="100" x2="100" y2="0"/>
+        <line class="segurar__diagonal" x1="5.3" y1="94.7" x2="94.7" y2="5.3"/>
       </svg>
       <span class="segurar__texto segurar__texto--clique">Clique e segure</span>
       <span class="segurar__texto segurar__texto--toque">Toque e segure</span>
@@ -153,6 +155,6 @@
   <script defer src="assets/vendor/gsap/SplitText.min.js"></script>
   <script defer src="assets/vendor/gsap/CustomEase.min.js"></script>
   <script defer src="assets/vendor/gsap/Observer.min.js"></script>
-  <script type="module" src="assets/js/comum.js"></script>
+  <script type="module" src="assets/js/carrossel.js"></script>
 </body>
 </html>
