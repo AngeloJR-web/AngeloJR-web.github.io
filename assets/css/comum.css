@@ -1,0 +1,127 @@
+/* Base e partes comuns a todas as páginas: fontes, cabeçalho, menu, laterais, cortinas e foco (spec 6, 10). */
+
+@font-face { font-family: 'Bellefair'; src: url('../fonts/bellefair-400.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Lato'; src: url('../fonts/lato-400.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Lato'; src: url('../fonts/lato-700.woff2') format('woff2'); font-weight: 700; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Lato'; src: url('../fonts/lato-900.woff2') format('woff2'); font-weight: 900; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Cormorant Garamond'; src: url('../fonts/cormorant-garamond-400-italico.woff2') format('woff2'); font-weight: 400; font-style: italic; font-display: swap; }
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; font-family: var(--fonte-texto); font-size: var(--tam-paragrafo); line-height: 1.6; }
+.tema-foto body { background: var(--cor-fundo-cartao); color: var(--cor-texto-foto); }
+.tema-claro body { background: var(--cor-fundo-materia); color: var(--cor-texto-materia); }
+img, svg { display: block; }
+a { color: inherit; }
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+
+.so-leitor { position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+.pular { position: fixed; left: 16px; top: 16px; z-index: 200; padding: 12px 16px; background: var(--cor-fundo-materia); color: var(--cor-texto-materia); transform: translateY(-200%); }
+.pular:focus { transform: none; }
+
+:focus-visible { outline: 1px solid currentColor; outline-offset: 4px; }
+
+/* Cabeçalho: o centro do texto fica a 7% da altura do retângulo 16:9 (spec 6.4). */
+.topo {
+  position: fixed; inset: 0 0 auto 0; z-index: 60;
+  height: max(64px, calc(7.875 * var(--u)));
+  display: flex; align-items: center;
+  padding: 0 calc(4.3 * var(--u)) 0 calc(5.3 * var(--u));
+  text-transform: uppercase;
+}
+.topo__marca { display: inline-flex; align-items: center; min-height: 44px; font-weight: 900; font-size: var(--tam-logo); letter-spacing: .09em; text-decoration: none; }
+.topo__nav { position: absolute; top: 0; bottom: 0; left: calc(18.3 * var(--u)); display: flex; align-items: center; gap: calc(2.5 * var(--u)); }
+.topo__link, .topo__fale {
+  display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px;
+  font-weight: 700; font-size: var(--tam-link); letter-spacing: .1em; text-decoration: none;
+}
+.topo__link[aria-current] { text-decoration: underline 1px var(--cor-destaque); text-underline-offset: calc(.4 * var(--u)); }
+.topo__barra { width: 1px; height: calc(.8 * var(--u)); background: currentColor; opacity: .5; }
+.topo__fim { margin-left: auto; display: flex; align-items: center; gap: calc(2.5 * var(--u)); }
+.topo__icone, .topo__menu { display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; }
+.topo__icone svg { width: max(16px, calc(1.2 * var(--u))); height: max(16px, calc(1.2 * var(--u))); }
+.topo__menu svg { width: max(18px, calc(1.4 * var(--u))); height: max(18px, calc(1.4 * var(--u))); }
+
+/* Laterais: marcador e etiqueta vertical no meio da altura, caixa social no canto (spec 6.4). */
+.lateral__marcador {
+  position: fixed; left: 0; top: 50%; z-index: 60; width: 0; height: 0;
+  border-top: calc(.55 * var(--u)) solid transparent; border-bottom: calc(.55 * var(--u)) solid transparent;
+  border-left: calc(.4 * var(--u)) solid currentColor; transform: translateY(-50%);
+}
+.lateral__etiqueta {
+  position: fixed; left: calc(2.4 * var(--u)); top: 50%; z-index: 60;
+  writing-mode: vertical-rl; transform: translate(-50%, -50%) rotate(180deg);
+  font-weight: 700; font-size: var(--tam-link); letter-spacing: .3em; text-transform: uppercase; white-space: nowrap;
+}
+.sociais {
+  position: fixed; left: 0; bottom: 0; z-index: 60;
+  width: max(44px, calc(4.9 * var(--u))); height: max(132px, calc(11.4 * var(--u)));
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+}
+.sociais a { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; }
+.sociais svg { width: max(16px, calc(1.2 * var(--u))); height: max(16px, calc(1.2 * var(--u))); }
+
+/* Temas: sobre a foto (Início) e claro (matérias). */
+.tema-foto .topo, .tema-foto .lateral { color: var(--cor-texto-foto); }
+.tema-claro .topo, .tema-claro .lateral { color: var(--cor-texto-materia); }
+.tema-foto .sociais { background: var(--cor-social-foto); color: var(--cor-fundo-cartao); }
+.tema-claro .sociais { background: var(--cor-social-materia); color: #FFFFFF; }
+.topo, .lateral__etiqueta, .lateral__marcador, .sociais { transition: color .15s, background-color .15s; }
+
+/* Menu em tela cheia (derivado). */
+.menu {
+  position: fixed; inset: 0; width: 100%; height: 100%; max-width: none; max-height: none; margin: 0;
+  padding: max(88px, calc(12 * var(--u))) calc(8 * var(--u)) calc(6 * var(--u));
+  border: 0; background: var(--cor-fundo-cartao); color: var(--cor-texto-foto); overflow: auto;
+}
+.menu::backdrop { background: transparent; }
+.menu__fechar {
+  position: absolute; top: max(10px, calc(3.94 * var(--u) - 22px)); right: calc(4.3 * var(--u));
+  display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px;
+}
+.menu__fechar svg { width: max(18px, calc(1.4 * var(--u))); height: max(18px, calc(1.4 * var(--u))); }
+.menu__slides, .menu__paginas { list-style: none; margin: 0; padding: 0; }
+.menu__slides { display: grid; gap: calc(.8 * var(--u)); }
+.menu__slides li, .menu__paginas li { overflow: clip; }
+.menu__slides a {
+  display: inline-flex; align-items: baseline; gap: calc(1.5 * var(--u)); min-height: 44px;
+  font: 400 max(28px, calc(4 * var(--u)))/1.15 var(--fonte-titulo); letter-spacing: .2em; text-transform: uppercase; text-decoration: none;
+}
+.menu__numero { width: 3ch; font-size: .45em; letter-spacing: .1em; opacity: .6; }
+.menu__paginas { display: flex; flex-wrap: wrap; gap: calc(3 * var(--u)); margin-top: calc(4 * var(--u)); }
+.menu__redes { display: flex; flex-wrap: wrap; gap: calc(3 * var(--u)); margin-top: calc(1.5 * var(--u)); }
+.menu__paginas a, .menu__redes a {
+  display: inline-flex; align-items: center; min-height: 44px;
+  font: 700 var(--tam-link)/1 var(--fonte-texto); letter-spacing: .1em; text-transform: uppercase; text-decoration: none;
+}
+
+/* Cortinas: cobrem tudo (menos o menu, que fica na camada do topo). */
+.cortina { position: fixed; inset: 0; z-index: 100; transform: translateY(100%); pointer-events: none; }
+.cortina--branca { background: var(--cor-fundo-materia); color: var(--cor-texto-materia); }
+.cortina--preta { background: var(--cor-fundo-cartao); }
+.chegou-preta .cortina { transform: none; background: var(--cor-fundo-cartao); }
+.cortina__materia { position: absolute; inset: 0 0 auto 0; }
+
+/* Cabeça da matéria (spec 6.6): aqui porque a cortina branca do Início também usa. */
+.materia__cabeca { padding: calc(11.8 * var(--u)) 16px 0; text-align: center; color: var(--cor-texto-materia); }
+.materia__titulo {
+  margin: 0; padding-left: .15em;
+  font: 400 var(--tam-materia-titulo)/1.3 var(--fonte-titulo); letter-spacing: .15em; text-transform: uppercase;
+  text-box: trim-both cap alphabetic;
+}
+.materia__linha { display: block; width: calc(33.1 * var(--u)); max-width: 80%; height: 1px; margin: calc(2.58 * var(--u)) auto 0; background: currentColor; }
+.materia__italico {
+  max-width: 60ch; margin: calc(1.8 * var(--u)) auto 0;
+  font: italic 400 var(--tam-materia-italico)/1.3 var(--fonte-italico); text-box: trim-both cap alphabetic;
+}
+
+@media (max-width: 767px) {
+  .topo { padding: 0 16px; }
+  .topo__nav, .topo__fale, .topo__icone, .topo__barra, .sociais { display: none; }
+  .menu { padding: 88px 24px 32px; }
+  .menu__fechar { right: 16px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+}
