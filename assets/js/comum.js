@@ -31,6 +31,9 @@ const u = () => unidade(innerWidth, innerHeight);
 
 const cortina = document.querySelector('.cortina');
 const cortinaMateria = cortina.querySelector('.cortina__materia');
+// O CSS esconde a cortina com translateY(100%). O GSAP leria isso como um y fixo em pixels e o somaria ao yPercent,
+// e a cortina pararia fora da tela. Daqui em diante ela se move só por yPercent.
+gsap.set(cortina, { y: 0, yPercent: html.classList.contains('chegou-preta') ? 0 : 100 });
 
 function pintarCortina(cor) {
   cortina.classList.remove('cortina--branca', 'cortina--preta');
@@ -45,8 +48,20 @@ function recolherCortina() {
   html.classList.remove('chegou-preta');
 }
 
+// Largura da barra de rolagem clássica (0 nas barras que flutuam sobre a página, como no celular).
+function larguraDaBarra() {
+  const sonda = document.createElement('div');
+  sonda.style.cssText = 'position:absolute;top:-200px;width:100px;height:100px;overflow:scroll;visibility:hidden';
+  document.body.append(sonda);
+  const largura = sonda.offsetWidth - sonda.clientWidth;
+  sonda.remove();
+  return largura;
+}
+
 // Título, linha e itálico da matéria, nas mesmas classes e posições da página que vai abrir.
+// A matéria rola e tem barra de rolagem; o Início não. Descontar a barra deixa o título no mesmo lugar na troca.
 function montarCabecalho({ titulo, italico }) {
+  cortinaMateria.style.right = `${larguraDaBarra()}px`;
   const cabeca = document.createElement('div');
   cabeca.className = 'materia__cabeca';
   const t = document.createElement('p');
