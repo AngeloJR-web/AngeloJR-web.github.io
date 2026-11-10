@@ -1,6 +1,7 @@
 // Páginas de matéria (projetos e Sobre): entrada da cabeça e da grade, tela ampliada e voltar com a cortina preta.
 import { chegada, descobrir, navegarCom, reduzirMovimento } from './comum.js';
 import { unidade } from './geometria.js';
+import { montarMailto } from './contato.js';
 
 const { gsap } = window;
 const raiz = document.documentElement;
@@ -85,5 +86,70 @@ document.querySelector('.materia__voltar')?.addEventListener('click', evento => 
   navegarCom('preta', evento.currentTarget.href);
 });
 
+/* ---------- Contato (Sobre) ---------- */
+
+// Mesma lógica do formulário do site anterior: valida nome e mensagem e abre o app de e-mail com tudo pronto.
+function iniciarContato() {
+  const formulario = document.querySelector('[data-form]');
+  if (!formulario) return;
+  const sucesso = formulario.querySelector('[data-sucesso]');
+  const campos = [formulario.elements.nome, formulario.elements.mensagem];
+
+  const validar = campo => {
+    const vazio = !campo.value.trim();
+    campo.setAttribute('aria-invalid', String(vazio));
+    document.getElementById(`${campo.id}-erro`).hidden = !vazio;
+    return !vazio;
+  };
+
+  // Depois do primeiro erro, o aviso some assim que o campo é preenchido.
+  for (const campo of campos) {
+    campo.addEventListener('input', () => {
+      if (campo.getAttribute('aria-invalid') === 'true') validar(campo);
+    });
+  }
+
+  formulario.addEventListener('submit', evento => {
+    evento.preventDefault();
+    const erros = campos.filter(campo => !validar(campo));
+    sucesso.hidden = true;
+    if (erros.length) {
+      for (const campo of erros) {
+        campo.classList.remove('treme');
+        void campo.offsetWidth; // reinicia a animação
+        campo.classList.add('treme');
+      }
+      erros[0].focus();
+      return;
+    }
+    location.href = montarMailto({
+      email: formulario.dataset.email,
+      assunto: formulario.elements.assunto.value,
+      nome: formulario.elements.nome.value,
+      mensagem: formulario.elements.mensagem.value,
+    });
+    sucesso.hidden = false;
+  });
+
+  // Copiar o e-mail: o botão avisa por 2 s e volta ao texto original (mesmo com cliques seguidos).
+  for (const botao of document.querySelectorAll('[data-copiar]')) {
+    const original = botao.textContent;
+    let relogio;
+    const avisar = texto => {
+      botao.textContent = texto;
+      clearTimeout(relogio);
+      relogio = setTimeout(() => {
+        botao.textContent = original;
+      }, 2000);
+    };
+    botao.addEventListener('click', () => {
+      Promise.resolve()
+        .then(() => navigator.clipboard.writeText(botao.dataset.copiar))
+        .then(() => avisar('Copiado'), () => avisar('Selecione e copie'));
+    });
+  }
+}
+
 if (chegada === 'preta') descobrir();
+iniciarContato();
 entrar();

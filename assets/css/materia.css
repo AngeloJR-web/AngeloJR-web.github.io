@@ -2,8 +2,8 @@
    A cabeça (título, linha e itálico) fica no comum.css, porque a cortina branca do Início também usa. */
 
 .materia { position: relative; padding-bottom: calc(8 * var(--u)); }
-/* A grade começa a 24u do alto da página. */
-.materia .materia__cabeca { min-height: calc(24 * var(--u)); }
+/* A grade começa a 24u do alto da página; com um itálico longo (3 linhas na Sobre), fica ao menos 2u abaixo dele. */
+.materia .materia__cabeca { min-height: calc(24 * var(--u)); padding-bottom: calc(2 * var(--u)); }
 
 /* Antes da entrada, cabeça e cartões esperam escondidos (o script mostra; se falhar, a classe sai em 4 s).
    Chegando pela cortina branca, a cabeça já aparece: a cortina mostrou o mesmo título. */
@@ -26,8 +26,9 @@
 .grade__cartao img { width: 100%; height: 100%; object-fit: cover; transition: transform .4s; }
 /* Escurecimento leve para o rótulo branco (derivado). */
 .grade__cartao::after { content: ''; position: absolute; inset: 0; background: rgba(0, 0, 0, .35); pointer-events: none; }
+/* O rótulo ocupa até 90% da largura do cartão e quebra a linha quando é longo (ex.: "Fevereiro · Primeiros passos"). */
 .grade__rotulo {
-  position: absolute; left: 50%; top: 50%; z-index: 1; transform: translate(-50%, -50%); padding-left: .1em;
+  position: absolute; left: 5%; right: 5%; top: 50%; z-index: 1; transform: translateY(-50%); padding-left: .1em;
   font: 400 var(--tam-rotulo)/1.2 var(--fonte-titulo); letter-spacing: .1em; text-transform: uppercase; text-align: center;
   text-shadow: 0 1px 14px rgba(0, 0, 0, .45);
 }
@@ -69,6 +70,66 @@
 .materia__proximo a { display: inline-block; margin-top: calc(1.5 * var(--u)); text-decoration: none; }
 .materia__proximo-nome { display: block; padding-left: .2em; font: 400 max(28px, calc(4 * var(--u)))/1.1 var(--fonte-titulo); letter-spacing: .2em; text-transform: uppercase; }
 .materia__proximo-frase { display: block; margin-top: .5em; font: italic 400 var(--tam-materia-italico)/1.3 var(--fonte-italico); }
+
+/* ---------- Sobre (spec 5.4) ---------- */
+
+.materia__secao { scroll-margin-top: calc(max(64px, 7.875 * var(--u)) + 24px); } /* o cabeçalho fixo não cobre o título ao pular para #contato */
+
+/* Trajetória: o cartão quadrado com o rótulo e, abaixo dele, o texto do capítulo. */
+.grade__capitulo { margin: 0; }
+.grade__capitulo .grade__cartao { cursor: auto; }
+.grade__legenda { margin-top: 16px; font: 400 var(--tam-texto-materia)/1.6 var(--fonte-texto); }
+.grade__legenda p { margin: 0; }
+.grade__link, .materia__provas a, .temas a {
+  display: inline-flex; align-items: center; min-height: 44px;
+  font: 700 var(--tam-link)/1 var(--fonte-texto); letter-spacing: .1em; text-transform: uppercase;
+}
+
+/* Quem sou: a foto na largura de uma coluna da grade e o texto ao lado. */
+.materia__quem { display: grid; grid-template-columns: var(--grade-coluna) minmax(0, 1fr); gap: var(--grade-espaco); align-items: start; }
+.materia__quem img { width: 100%; height: auto; }
+
+/* Em resumo: números grandes em Bellefair. */
+.numeros { list-style: none; margin: 0 0 calc(3 * var(--u)); padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--grade-espaco); }
+.materia__secao .numeros li { font: 400 var(--tam-texto-materia)/1.5 var(--fonte-texto); }
+.numeros__valor { display: block; margin-bottom: 8px; font: 400 max(40px, calc(5 * var(--u)))/1 var(--fonte-titulo); }
+.temas { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0 20px; }
+.materia__blocos p + p { margin-top: 8px; }
+.materia__blocos h3 a { text-underline-offset: .2em; }
+.materia__provas { display: flex; flex-wrap: wrap; gap: 0 20px; }
+.materia__secao .materia__pilha, .materia__secao .materia__atualizado { font: 700 var(--tam-link)/1.4 var(--fonte-texto); letter-spacing: .1em; text-transform: uppercase; opacity: .65; }
+
+/* Vamos conversar?: canais à esquerda e formulário à direita. */
+.contato__grade { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); gap: calc(2 * var(--grade-espaco)); align-items: start; }
+.contato__canais { display: grid; gap: 16px; margin: 24px 0 0; }
+.contato__canais dt { font: 700 var(--tam-link)/1.4 var(--fonte-texto); letter-spacing: .1em; text-transform: uppercase; opacity: .65; }
+.contato__canais dd { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 16px; margin: 4px 0 0; font: 400 var(--tam-texto-materia)/1.5 var(--fonte-texto); overflow-wrap: anywhere; }
+.contato__copiar { padding: 0 14px; }
+
+.formulario { display: grid; gap: 20px; }
+.formulario__campo { display: grid; gap: 8px; }
+.formulario label { font: 700 var(--tam-link)/1.4 var(--fonte-texto); letter-spacing: .1em; text-transform: uppercase; }
+.formulario input, .formulario select, .formulario textarea {
+  width: 100%; min-height: 48px; margin: 0; padding: 12px 14px; border: 1px solid rgba(31, 31, 31, .6); border-radius: 0;
+  background: #FFFFFF; color: inherit; font: 400 16px/1.5 var(--fonte-texto);
+}
+.formulario textarea { min-height: 160px; resize: vertical; }
+.formulario :is(input, select, textarea):focus-visible { outline: 1px solid currentColor; outline-offset: 2px; border-color: currentColor; }
+.formulario [aria-invalid="true"] { border-color: var(--cor-destaque); }
+.formulario__erro { color: var(--cor-destaque); font: 700 14px/1.4 var(--fonte-texto); }
+.formulario__fim { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; }
+.formulario__sucesso { font: 400 var(--tam-texto-materia)/1.5 var(--fonte-texto); }
+.treme { animation: treme .4s; }
+@keyframes treme { 20%, 60% { transform: translateX(-4px); } 40%, 80% { transform: translateX(4px); } }
+
+@media (max-width: 899px) {
+  .contato__grade { grid-template-columns: 1fr; }
+}
+@media (max-width: 767px) {
+  .materia__quem { grid-template-columns: 1fr; }
+  .materia__quem img { max-width: 280px; }
+  .numeros { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
 
 /* Tela ampliada (derivada). */
 .ampliada {
