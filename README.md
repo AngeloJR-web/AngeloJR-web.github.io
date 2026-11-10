@@ -1,84 +1,77 @@
 # Portfólio do Angelo
 
-Site publicado em <https://angelojr-web.github.io>, feito com HTML, CSS e JavaScript, sem etapa de build. As animações usam o [GSAP](https://gsap.com), guardado no próprio repositório. O visual segue o conceito ["Blue Planet" Carousel Concept](https://dribbble.com/shots/7129691--Blue-Planet-Carousel-Concept), de Giulio Cuscito.
+Meu portfólio, no ar em <https://angelojr-web.github.io>. É HTML, CSS e JavaScript puro, sem build. As animações são feitas com [GSAP](https://gsap.com), que fica guardado aqui mesmo no repositório, em `assets/vendor/gsap/`.
 
-## Ver no computador
+O visual foi inspirado no ["Blue Planet" Carousel Concept](https://dribbble.com/shots/7129691--Blue-Planet-Carousel-Concept), do Giulio Cuscito.
+
+## Rodando no computador
 
 ```bash
 npm run dev
 ```
 
-O site abre em <http://localhost:4173>.
+Depois é só abrir <http://localhost:4173>.
 
-## Como editar
+## Onde fica cada coisa
 
-| O que mudar | Onde |
-| --- | --- |
-| Textos e links dos slides | Cada `<article class="slide">` do `index.html` |
-| Foto do slide de apresentação | `assets/img/slides/angelo-{960,1600,2400}.webp`, em 16:9 |
-| Páginas de projeto | `projetos/`, com um HTML por projeto |
-| Telas dos apps (slides de projeto, páginas de projeto e Trajetória) | `assets/img/telas/`, em 1600 × 1000 |
-| Telas da Trajetória que não têm página de projeto | `assets/img/trajetoria/` |
-| Página Sobre e formulário de contato | `sobre.html` |
-| Foto do "Quem sou" | `assets/img/angelo.webp`, em 480 × 600 |
-| Imagens ao compartilhar o link | `assets/img/og/`, em 1200 × 630 |
-| Cores, fontes e tamanhos | `assets/css/tokens.css` |
-| Estilos do Início | `assets/css/inicio.css` |
-| Estilos das páginas de projeto e da Sobre | `assets/css/materia.css` |
-| Animações ao rolar a Sobre e as páginas de projeto | `assets/js/revelar.js` |
-| Cabeçalho, menu, laterais e cortinas | `assets/css/comum.css` e `assets/js/comum.js` |
-| Tempos da troca de slide | `assets/js/cronograma.js` |
-| Curvas das animações | `assets/js/curvas.js` |
-| Tamanho dos cartões e efeito de profundidade | `assets/js/geometria.js`, em `MEDIDAS` |
-| Espera do giro automático (6 s) e do "clique e segure" (600 ms) | `assets/js/carrossel.js` |
+O Início é o `index.html`. Cada slide é um `<article class="slide">`, e os textos e links ficam direto nele. As páginas dos projetos estão em `projetos/`, uma por projeto, e a Sobre (com o formulário de contato) é o `sobre.html`.
 
-### Atributos de cada slide
+Imagens:
 
-| Atributo | Para que serve |
-| --- | --- |
-| `id` | Endereço do slide, como em `index.html#vaultcore` |
-| `data-nome` | Nome do slide no menu |
-| `data-etiqueta` | Etiqueta vertical à esquerda |
-| `data-abre` | Página que abre no clique do título ou no "clique e segure" |
-| `data-foto` | Começo do nome dos arquivos da foto, sem o tamanho (só o slide de apresentação usa) |
-| `data-tela` | Tela do app que o slide de projeto mostra: desfocada com o slide aberto e nítida no modo cartão. É a mesma que abre a grade da página do projeto |
-| `style="--escurecer: .58"` | Escurece mais a imagem quando o texto fica difícil de ler (o padrão é .4) |
-| `data-materia-titulo` e `data-materia-italico` | Título e itálico que a cortina branca mostra; precisam ser iguais aos da página que abre |
+- `assets/img/telas/`: prints dos apps, em 1600 × 1000. Aparecem nos slides, nas páginas de projeto e na Trajetória da Sobre.
+- `assets/img/trajetoria/`: os prints da Trajetória que não têm página de projeto.
+- `assets/img/slides/`: a foto do slide de apresentação, em três larguras (960, 1600 e 2400).
+- `assets/img/angelo.webp`: minha foto do "Quem sou", em 480 × 600.
+- `assets/img/og/`: as imagens que aparecem quando alguém compartilha o link, em 1200 × 630.
 
-### Adicionar um projeto
+Estilos e scripts:
 
-1. Copie um `<article class="slide">` no `index.html` e troque o `id`, os textos e os `data-*`.
-2. Coloque a tela principal do app em `assets/img/telas/`, em 1600 × 1000, e aponte o `data-tela` do slide para ela.
-3. Acrescente o slide no menu (`.menu__slides`) de todas as páginas.
-4. Copie uma página de `projetos/`, troque o conteúdo e ajuste o "Próximo projeto" da página anterior.
+- As cores, as fontes e os tamanhos ficam no `assets/css/tokens.css`.
+- `inicio.css` cuida do carrossel do Início, e `materia.css` das páginas de projeto e da Sobre.
+- O cabeçalho, o menu, as laterais e as cortinas de transição estão em `comum.css` e `comum.js`.
+- Os tempos da troca de slide ficam no `cronograma.js`, as curvas das animações no `curvas.js` e o tamanho dos cartões (com o efeito de profundidade) no `MEDIDAS` do `geometria.js`.
+- As animações ao rolar a Sobre e as páginas de projeto são do `revelar.js`.
+- A espera do giro automático (6 s) e do "clique e segure" (600 ms) dá pra mudar no `carrossel.js`.
+
+### Atributos de um slide
+
+- `id`: o endereço do slide, tipo `index.html#vaultcore`.
+- `data-nome`: o nome que aparece no menu.
+- `data-etiqueta`: a etiqueta vertical da esquerda.
+- `data-abre`: a página que abre quando alguém clica no título ou usa o "clique e segure".
+- `data-tela`: o print do app que o slide mostra, desfocado com o slide aberto e nítido no modo cartão. Uso o mesmo que abre a grade da página do projeto.
+- `data-foto`: só o slide de apresentação usa. É o começo do nome dos arquivos da foto, sem o tamanho.
+- `data-materia-titulo` e `data-materia-italico`: o título e o itálico que aparecem na cortina branca. Precisam ser iguais aos da página que abre.
+
+Se o texto ficar difícil de ler em cima de alguma imagem, dá pra escurecer mais com `style="--escurecer: .58"`. O padrão é .4.
+
+### Pra adicionar um projeto
+
+1. Copio um `<article class="slide">` no `index.html` e troco o `id`, os textos e os `data-*`.
+2. Coloco o print principal do app em `assets/img/telas/` (1600 × 1000) e aponto o `data-tela` pra ele.
+3. Adiciono o slide no menu (`.menu__slides`) de todas as páginas.
+4. Copio uma página de `projetos/`, troco o conteúdo e acerto o "Próximo projeto" da página anterior.
 
 O carrossel, a numeração e a paginação se montam sozinhos a partir dos slides.
 
-### Conferir as animações
+### Conferindo as animações
 
-Abra o Início com `?medir` no endereço: a troca de slide pausa a cada passo, e o console mostra o relatório `[medir]` comparando tempos e medidas com os do vídeo de referência. Com `?reduzir`, o site mostra a versão com movimento reduzido.
+Com `?medir` no endereço do Início, a troca de slide vai passo a passo e o console mostra o relatório `[medir]`, que compara os tempos e as medidas com o vídeo do conceito. Com `?reduzir`, aparece a versão com movimento reduzido.
 
 ### Formulário de contato
 
-O site não tem servidor. Por isso o formulário da Sobre abre o app de e-mail de quem visita, com a mensagem pronta para o endereço em `data-email`.
+Como o site não tem servidor, o formulário da Sobre abre o app de e-mail de quem está visitando, com a mensagem já pronta para o endereço que está em `data-email`.
 
-## Publicar
+## Publicação
 
-O site roda no GitHub Pages a partir da branch `main`. Cada envio para ela atualiza o endereço público em cerca de um minuto.
+O site fica no GitHub Pages e sai da branch `main`. Cada push atualiza o endereço em mais ou menos um minuto.
 
-Todos os caminhos são relativos, então o site também funciona em outro endereço. Nesse caso, troque o endereço nas tags de compartilhamento, no `sitemap.xml` e no `robots.txt`.
+Os caminhos são todos relativos, então dá pra hospedar em outro lugar. Aí só precisa trocar o endereço nas tags de compartilhamento, no `sitemap.xml` e no `robots.txt`.
 
-## Créditos das imagens
+## Créditos
 
-A foto do slide de apresentação é do Unsplash, sob a [Licença Unsplash](https://unsplash.com/license), conferida em 2026-11-09. Ela está em `assets/img/slides/angelo-{960,1600,2400}.webp`, e as imagens de compartilhamento do Início e da Sobre (`assets/img/og/inicio.jpg` e `sobre.jpg`) são recortes dela.
+A foto das montanhas do slide de apresentação é do [Nathan Anderson](https://unsplash.com/@nathananderson), no Unsplash ([foto original](https://unsplash.com/photos/iYO-EGosrCo), [licença](https://unsplash.com/license)). As imagens de compartilhamento do Início e da Sobre são recortes dela.
 
-| Arquivo | Tema | Autor | Foto | Foco |
-| --- | --- | --- | --- | --- |
-| `angelo` | montanhas sob céu noturno azul | [Nathan Anderson](https://unsplash.com/@nathananderson) | [iYO-EGosrCo](https://unsplash.com/photos/iYO-EGosrCo) | 50% 50% |
+O resto são prints dos meus apps, com dados de exemplo. Os pôsteres que aparecem no DoramaRank vêm do The Movie Database. As imagens de compartilhamento dos projetos são recortes do topo do print principal de cada um.
 
-As outras imagens são telas dos apps do Angelo, com dados de exemplo. Os pôsteres que aparecem nas telas do DoramaRank são do The Movie Database. As imagens de compartilhamento dos projetos são recortes de 1200 × 630 do topo da tela principal de cada um.
-
-## Fontes e bibliotecas
-
-- Bellefair, Lato e Cormorant Garamond, sob a SIL Open Font License; os textos das licenças estão em `assets/fonts/`.
-- GSAP 3.15.1, sob a licença gratuita "Standard 'No Charge' License"; detalhes em `assets/vendor/gsap/LICENCA.md`.
+As fontes Bellefair, Lato e Cormorant Garamond estão sob a SIL Open Font License, e os textos das licenças ficam em `assets/fonts/`. O GSAP 3.15.1 usa a licença gratuita "Standard 'No Charge' License", com os detalhes em `assets/vendor/gsap/LICENCA.md`.
