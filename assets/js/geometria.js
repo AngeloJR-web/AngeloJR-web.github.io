@@ -1,4 +1,4 @@
-// Geometria dos cartões do carrossel (spec 6.5), sem DOM.
+// Geometria dos cartões do carrossel, sem DOM.
 // abertura: 0 = modo cartão, 1 = tela cheia (vale para o cartão atual).
 // deslocamento: quantos passos o trilho andou (fracionário durante o deslize).
 

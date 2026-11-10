@@ -1,4 +1,4 @@
-/* Carrossel do Início (spec 6.4, 6.5, 9).
+/* Carrossel do Início.
    Posições verticais dentro do retângulo 16:9 centralizado: calc(50svh + (P − 50) × 0.5625u),
    em que P é a porcentagem medida no vídeo. O que fica embaixo se mede a partir do fundo. */
 
@@ -89,7 +89,7 @@ html.js, html.js body { height: 100%; overflow: hidden; }
 }
 .segurar.is-segurando { transform: scale(.7); }
 
-/* Celular: o bloco vira uma coluna centralizada na vertical (spec 6.1, 9). */
+/* Celular: o bloco vira uma coluna centralizada na vertical. */
 @media (max-width: 767px) {
   .slide {
     left: 16px; right: 16px; width: auto; max-width: none; transform: none;

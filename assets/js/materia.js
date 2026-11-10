@@ -7,7 +7,7 @@ import { revelarAoRolar } from './revelar.js';
 const { gsap } = window;
 const raiz = document.documentElement;
 
-/* ---------- Entrada (spec 7.2) ---------- */
+/* ---------- Entrada ---------- */
 
 // A cabeça inclui o VOLTAR, que fica fora do <header> mas aparece junto com ele.
 const partesDaCabeca = [...document.querySelectorAll('.materia .materia__cabeca > *, .materia__voltar')];

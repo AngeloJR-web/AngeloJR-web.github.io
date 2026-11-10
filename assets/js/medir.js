@@ -1,5 +1,5 @@
 // Relatório de fidelidade (só com ?medir no endereço): mede cada troca no DOM e compara com o
-// cronograma, as curvas e as medidas do vídeo (spec 14.1).
+// cronograma, as curvas e as medidas do vídeo.
 // Modo "passo" (?medir): pausa a troca e avança a linha do tempo de 1/120 em 1/120 s, lendo o DOM em
 // cada passo; não depende do relógio da aba (que o navegador desacelera quando a janela não está à vista).
 // Modo "tempo-real" (?medir=tempo-real): lê a cada passo do relógio do GSAP, com a troca rodando normalmente.

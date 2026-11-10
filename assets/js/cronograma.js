@@ -1,4 +1,4 @@
-// Tempos da troca de slide (spec 7.1), em segundos a partir do comando, sem DOM.
+// Tempos da troca de slide, em segundos a partir do comando, sem DOM.
 // palavrasSai/palavrasEntra: quantas palavras tem o título que sai e o que entra.
 // O texto nasce e some na linha fina (medido no vídeo quadro a quadro): acima dela, desce até ela para sair e
 // sobe dela para entrar; abaixo dela, o negrito e o parágrafo fazem o contrário, como um bloco.
@@ -40,7 +40,7 @@ export function cronograma({ palavrasSai, palavrasEntra }) {
 
   const crescer = { inicio: inicioDeslize + DESLIZAR + 0.13, duracao: CRESCER };
 
-  // Entrada: "inicio" é a referência do spec (fim do crescimento + 0,11 s). A linha de cima começa 0,21 s antes,
+  // Entrada: "inicio" é a referência (fim do crescimento + 0,11 s). A linha de cima começa 0,21 s antes,
   // ainda no fim do crescimento; o bloco de baixo acompanha a 1ª palavra.
   const e = crescer.inicio + CRESCER + 0.11;
   const palavras = Array.from({ length: m }, (_, i) => ({

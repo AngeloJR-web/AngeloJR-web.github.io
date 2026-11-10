@@ -1,4 +1,4 @@
-/* Tokens do visual "Blue Planet" (spec 6.1 a 6.6).
+/* Tokens do visual "Blue Planet".
    u = 1% da largura do maior retângulo 16:9 que cabe na janela. */
 :root {
   --u: min(1vw, 1.7778vh);

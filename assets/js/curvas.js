@@ -1,9 +1,9 @@
-// Curvas de aceleração medidas no vídeo de referência (spec, Apêndice A.1), sem DOM.
+// Curvas de aceleração medidas no vídeo de referência, sem DOM.
 // Cada amostra é [u, p]: tempo normalizado da etapa e progresso, ambos de 0 a 1.
 
 export const NOMES_CURVAS = ['encolher', 'deslizar', 'crescer', 'cortina-branca', 'preta-entra', 'preta-sai'];
 
-// Valores do spec: u e p em porcentagem, como foram medidos.
+// u e p em porcentagem, como foram medidos.
 const MEDIDAS = {
   encolher: [[0.03, 0.7], [0.085, 1.9], [0.14, 3.9], [0.197, 7.4], [0.252, 12.2], [0.307, 19.2], [0.363, 30.4], [0.418, 50.5], [0.473, 68.7], [0.53, 78.9], [0.585, 85.3], [0.64, 89.8], [0.697, 93.0], [0.752, 95.6], [0.807, 97.5], [0.863, 98.7], [0.918, 99.4], [0.973, 100]],
   deslizar: [[0.026, 0.2], [0.079, 0.9], [0.132, 2.1], [0.184, 3.9], [0.237, 6.2], [0.29, 9.7], [0.342, 14.5], [0.395, 22.4], [0.421, 28.1], [0.448, 35.8], [0.474, 46.4], [0.5, 58.2], [0.527, 67.4], [0.553, 74.1], [0.579, 79.0], [0.632, 85.9], [0.685, 90.5], [0.737, 93.8], [0.79, 96.1], [0.843, 97.7], [0.895, 98.8], [0.948, 99.8], [1, 100]],

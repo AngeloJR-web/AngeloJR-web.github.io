@@ -8,7 +8,7 @@ Site publicado em <https://angelojr-web.github.io>, feito com HTML, CSS e JavaSc
 npm run dev
 ```
 
-O site abre em <http://localhost:4173>. Os testes rodam com `npm test`.
+O site abre em <http://localhost:4173>.
 
 ## Como editar
 
@@ -52,7 +52,7 @@ O site abre em <http://localhost:4173>. Os testes rodam com `npm test`.
 3. Acrescente o slide no menu (`.menu__slides`) de todas as páginas.
 4. Copie uma página de `projetos/`, troque o conteúdo e ajuste o "Próximo projeto" da página anterior.
 
-O carrossel, a numeração e a paginação se montam sozinhos a partir dos slides. `npm test` confere se os títulos, os links e as fotos batem.
+O carrossel, a numeração e a paginação se montam sozinhos a partir dos slides.
 
 ### Conferir as animações
 

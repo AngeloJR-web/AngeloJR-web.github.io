@@ -5,7 +5,6 @@
   "description": "Portfólio do Angelo",
   "type": "module",
   "scripts": {
-    "dev": "node scripts/servir.mjs",
-    "test": "node --test tests/*.test.js"
+    "dev": "node scripts/servir.mjs"
   }
 }

@@ -1,5 +1,5 @@
 // Carrossel do Início: monta os cartões a partir dos slides do HTML, posiciona tudo com a geometria
-// medida e anima a troca de slide com os tempos e as curvas do vídeo (spec 7.1).
+// medida e anima a troca de slide com os tempos e as curvas do vídeo.
 import { chegada, descobrir, fecharMenu, navegarCom, reduzirMovimento } from './comum.js';
 import { criarCarrossel, criarFiltroDeGesto, numeroRomano } from './estado.js';
 import { MEDIDAS, calcularCartoes, unidade } from './geometria.js';
@@ -247,7 +247,7 @@ function recortarTudo() {
   }
 }
 
-// Entrada do texto do slide i (spec 7.1, etapa 6). Os tempos são relativos a entrada.comeca, que é quando a linha de
+// Entrada do texto do slide i. Os tempos são relativos a entrada.comeca, que é quando a linha de
 // cima começa a subir (antes da referência "inicio"): quem chama põe esta linha do tempo nesse instante.
 export function entrarTexto(i) {
   const t = textos[i];
@@ -371,7 +371,7 @@ function trocarSemMovimento(de, para) {
   troca = tl;
 }
 
-// Giro automático: avança 6 s depois que o texto entra e para de vez na primeira interação (spec 8).
+// Giro automático: avança 6 s depois que o texto entra e para de vez na primeira interação.
 const giro = reduzirMovimento ? null : criarGiro({ espera: 6000 });
 
 // Única porta de entrada para trocar de slide.
@@ -461,7 +461,7 @@ document.addEventListener('keydown', evento => {
   comando(alvo);
 });
 
-/* ---------- Clique e segure, título e saída para outra página (spec 7.2) ---------- */
+/* ---------- Clique e segure, título e saída para outra página ---------- */
 
 const segurar = criarSegurar({ duracao: 600 });
 const anelDeProgresso = botao.querySelector('.segurar__progresso');
@@ -525,7 +525,7 @@ addEventListener('pageshow', evento => {
   gsap.set(anelDeProgresso, { strokeDashoffset: 1 });
 });
 
-/* ---------- Abertura do site (derivada, spec 7.4) ---------- */
+/* ---------- Abertura do site ---------- */
 
 let introducao = null;
 const moldura = ['.topo', '.lateral', '.sociais', '.paginacao', '.segurar'].map(s => document.querySelector(s));

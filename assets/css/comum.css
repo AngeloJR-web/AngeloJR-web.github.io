@@ -1,4 +1,4 @@
-/* Base e partes comuns a todas as páginas: fontes, cabeçalho, menu, laterais, cortinas e foco (spec 6, 10). */
+/* Base e partes comuns a todas as páginas: fontes, cabeçalho, menu, laterais, cortinas e foco. */
 
 @font-face { font-family: 'Bellefair'; src: url('../fonts/bellefair-400.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
 @font-face { font-family: 'Lato'; src: url('../fonts/lato-400.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
@@ -21,7 +21,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 
 :focus-visible { outline: 1px solid currentColor; outline-offset: 4px; }
 
-/* Cabeçalho: o centro do texto fica a 7% da altura do retângulo 16:9 (spec 6.4). */
+/* Cabeçalho: o centro do texto fica a 7% da altura do retângulo 16:9. */
 .topo {
   position: fixed; inset: 0 0 auto 0; z-index: 60;
   height: max(64px, calc(7.875 * var(--u)));
@@ -42,7 +42,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .topo__icone svg { width: max(16px, calc(1.2 * var(--u))); height: max(16px, calc(1.2 * var(--u))); }
 .topo__menu svg { width: max(18px, calc(1.4 * var(--u))); height: max(18px, calc(1.4 * var(--u))); }
 
-/* Laterais: marcador e etiqueta vertical no meio da altura, caixa social no canto (spec 6.4). */
+/* Laterais: marcador e etiqueta vertical no meio da altura, caixa social no canto. */
 .lateral__marcador {
   position: fixed; left: 0; top: 50%; z-index: 60; width: 0; height: 0;
   border-top: calc(.55 * var(--u)) solid transparent; border-bottom: calc(.55 * var(--u)) solid transparent;
@@ -109,7 +109,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .chegou-preta .cortina { transform: none; background: var(--cor-fundo-cartao); }
 .cortina__materia { position: absolute; inset: 0 0 auto 0; }
 
-/* Cabeça da matéria (spec 6.6): aqui porque a cortina branca do Início também usa. */
+/* Cabeça da matéria: aqui porque a cortina branca do Início também usa. */
 .materia__cabeca { padding: max(96px, calc(11.8 * var(--u))) 16px 0; text-align: center; color: var(--cor-texto-materia); }
 .materia__titulo {
   margin: 0; padding-left: .15em;

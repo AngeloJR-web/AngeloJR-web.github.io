@@ -1,4 +1,4 @@
-/* Páginas de matéria: projetos e Sobre (spec 5.3, 5.4, 6.6).
+/* Páginas de matéria: projetos e Sobre.
    A cabeça (título, linha e itálico) fica no comum.css, porque a cortina branca do Início também usa. */
 
 .materia { position: relative; padding-bottom: calc(8 * var(--u)); }
@@ -65,7 +65,7 @@
 .materia__proximo-nome { display: block; padding-left: .2em; font: 400 max(28px, calc(4 * var(--u)))/1.1 var(--fonte-titulo); letter-spacing: .2em; text-transform: uppercase; }
 .materia__proximo-frase { display: block; margin-top: .5em; font: italic 400 var(--tam-materia-italico)/1.3 var(--fonte-italico); }
 
-/* ---------- Sobre (spec 5.4) ---------- */
+/* ---------- Sobre ---------- */
 
 .materia__secao { scroll-margin-top: calc(max(64px, 7.875 * var(--u)) + 24px); } /* o cabeçalho fixo não cobre o título ao pular para #contato */
 
