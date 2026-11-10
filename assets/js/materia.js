@@ -82,6 +82,8 @@ if (ampliada) {
 /* ---------- Voltar ---------- */
 
 document.querySelector('.materia__voltar')?.addEventListener('click', evento => {
+  // Ctrl, Cmd, Shift ou Alt + clique abrem em outra aba ou janela, como em qualquer link.
+  if (evento.ctrlKey || evento.metaKey || evento.shiftKey || evento.altKey) return;
   evento.preventDefault();
   navegarCom('preta', evento.currentTarget.href);
 });

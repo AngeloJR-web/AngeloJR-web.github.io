@@ -408,6 +408,8 @@ botao.addEventListener('contextmenu', evento => evento.preventDefault());
 document.addEventListener('click', evento => {
   const link = evento.target instanceof Element && evento.target.closest('.slide__titulo a');
   if (!link) return;
+  // Ctrl, Cmd, Shift ou Alt + clique abrem a página em outra aba ou janela, como em qualquer link.
+  if (evento.ctrlKey || evento.metaKey || evento.shiftKey || evento.altKey) return;
   evento.preventDefault();
   if (podeAbrir()) abrir(visual.atual);
 });
