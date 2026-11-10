@@ -10,9 +10,20 @@ const { gsap } = window;
 // Fração do caminho até a linha fina em que a palavra está (0 = no lugar, 1 = escondida).
 const escondida = el => gsap.getProperty(el, 'yPercent') / (Number(el.dataset.escondido) || 120);
 
+// Quantos px da tinta do título e da linha de cima ainda aparecem acima do corte da linha fina (0 ou menos = tudo
+// escondido). O corte é o fundo da máscara menos o recorte de baixo do clip-path que o carrossel pôs nela; a tinta
+// começa acima do topo da caixa (acentos e letras redondas), na medida que o carrossel calcula em tintaAcima().
+function sobraAcima(t, tinta) {
+  const partes = [...t.titulo.words.map((el, k) => [el, t.titulo.masks[k]]), ...t.cima.lines.map((el, k) => [el, t.cima.masks[k]])];
+  return Math.max(...partes.map(([el, mascara]) => {
+    const recorte = parseFloat(mascara.style.clipPath.replace('inset(', '').split(' ')[2]);
+    return mascara.getBoundingClientRect().bottom - recorte - (el.getBoundingClientRect().top - tinta(el));
+  }));
+}
+
 const PASSO = 1 / 120;
 
-export function iniciar({ slides, palco, textos, modo = 'passo' }) {
+export function iniciar({ slides, palco, textos, tintaAcima, modo = 'passo' }) {
   let info = null;
   let amostras = [];
   let tempoDoPasso = null;
@@ -43,6 +54,7 @@ export function iniciar({ slides, palco, textos, modo = 'passo' }) {
       // 0 = no lugar, 1 = atrás da linha fina (o carrossel guarda em data-escondido quanto a palavra anda).
       sai: escondida(textos[info.de].titulo.words[0]),
       entra: escondida(textos[info.para].titulo.words[0]),
+      sobra: sobraAcima(textos[info.de], tintaAcima),
     });
   }
 
@@ -86,6 +98,8 @@ export function iniciar({ slides, palco, textos, modo = 'passo' }) {
     checar('cartão: largura / L', parado.de.largura / L, MEDIDAS.cartaoLargura, 0.01);
     checar('cartão: altura / A', parado.de.altura / A, MEDIDAS.cartaoAltura, 0.01);
     checar('foto no cartão: escala', parado.de.escala, MEDIDAS.escalaFotoCartao, 0.02);
+    // No modo cartão, nem uma tira das letras de cima pode aparecer acima da linha fina (em px).
+    checar('texto: some todo atrás da linha', Math.max(0, parado.sobra), 0, 0.1);
 
     // Parallax: desvio da foto dividido pelo deslocamento do cartão, durante o deslize.
     const razoes = amostras

@@ -14,6 +14,10 @@ html.js, html.js body { height: 100%; overflow: hidden; }
 }
 /* Escurecimento para o texto branco ficar legível (derivado); um slide pode pedir mais com --escurecer. */
 .cartao::after { content: ''; position: absolute; inset: 0; background: rgba(0, 0, 0, var(--escurecer, .4)); }
+/* Telas dos apps: com o slide aberto, a cópia desfocada e o véu cobrem a tela nítida; no modo cartão, os dois somem
+   (posicionar() controla a opacidade). A cópia é mais alta que a tela para a borda do desfoque não aparecer. */
+.cartao__foto--desfocada { height: 112%; filter: blur(calc(1.4 * var(--u))); }
+.cartao--tela::after { opacity: var(--veu, 1); }
 
 /* Texto do slide: bloco centralizado com a largura do título; as outras partes se alinham à esquerda dele. */
 .slide {

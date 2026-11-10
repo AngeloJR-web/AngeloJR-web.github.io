@@ -28,6 +28,8 @@ export const slides = artigos.map(el => ({
   etiqueta: el.dataset.etiqueta,
   abre: el.dataset.abre,
   base: el.dataset.foto,
+  // Slides de projeto: a tela real do app (um arquivo só), desfocada com o slide parado e nítida no modo cartão.
+  tela: el.dataset.tela,
   cabecalho: { titulo: el.dataset.materiaTitulo, italico: el.dataset.materiaItalico },
   cartao: null,
   foto: null,
@@ -55,6 +57,13 @@ for (const [i, s] of slides.entries()) {
   const escurecer = s.el.style.getPropertyValue('--escurecer');
   if (escurecer) cartao.style.setProperty('--escurecer', escurecer);
   cartao.append(foto);
+  if (s.tela) {
+    // Cópia desfocada por cima da tela nítida: aparece com o slide aberto e some quando ele vira cartão.
+    cartao.classList.add('cartao--tela');
+    s.desfocada = foto.cloneNode();
+    s.desfocada.classList.add('cartao__foto--desfocada');
+    cartao.append(s.desfocada);
+  }
   trilho.append(cartao);
   s.cartao = cartao;
   s.foto = foto;
@@ -75,9 +84,14 @@ function distancia(a, b) {
 // Põe a foto nos cartões a até `raio` slides de `centro` (decisão R8: só o que está perto).
 export function carregarFotos(raio, centro = visual.atual) {
   for (const [i, s] of slides.entries()) {
-    if (s.foto.srcset || distancia(i, centro) > raio) continue;
+    if (s.foto.hasAttribute('src') || s.foto.hasAttribute('srcset') || distancia(i, centro) > raio) continue;
     if (i === centro) s.foto.fetchPriority = 'high';
-    s.foto.srcset = `${s.base}-960.webp 960w, ${s.base}-1600.webp 1600w, ${s.base}-2400.webp 2400w`;
+    if (s.tela) {
+      s.foto.src = s.tela;
+      s.desfocada.src = s.tela;
+    } else {
+      s.foto.srcset = `${s.base}-960.webp 960w, ${s.base}-1600.webp 1600w, ${s.base}-2400.webp 2400w`;
+    }
   }
 }
 
@@ -87,11 +101,18 @@ export function posicionar() {
   const largura = palco.clientWidth;
   const altura = palco.clientHeight;
   for (const c of calcularCartoes({ largura, altura, total, ...visual })) {
-    const { cartao, foto } = slides[c.indice];
+    const { cartao, foto, desfocada } = slides[c.indice];
     cartao.style.transform = `translateX(${c.centroX - largura / 2}px)`;
     cartao.style.clipPath = `inset(${(altura - c.altura) / 2}px ${(largura - c.largura) / 2}px)`;
     cartao.style.visibility = c.visivel ? 'visible' : 'hidden';
     foto.style.transform = `translate(-50%, -50%) translateX(${c.desvioFoto}px) scale(${c.escalaFoto})`;
+    if (desfocada) {
+      // Aberto (tela cheia): desfocada e escurecida, para o texto ler bem; no modo cartão: nítida e sem véu.
+      const aberto = c.d === 0 ? visual.abertura : 0;
+      desfocada.style.transform = foto.style.transform;
+      desfocada.style.opacity = aberto;
+      cartao.style.setProperty('--veu', aberto);
+    }
   }
 }
 
@@ -141,9 +162,22 @@ const escondido = el => Number(el.dataset.escondido) || ESCONDIDO;
 const valorEscondido = (_, el) => escondido(el);
 
 // Recorta o texto do slide i na linha fina e calcula quanto cada parte anda para sumir nela:
-// - acima (título e linha de cima): a máscara deixa ver só até o corte de cima, e a parte desce até o topo dela chegar lá;
+// - acima (título e linha de cima): a máscara deixa ver só até o corte de cima, e a parte desce até o topo da tinta
+//   dela (acentos incluídos) chegar lá;
 // - abaixo (negrito e parágrafo): a máscara deixa ver só a partir do corte de baixo, e o bloco sobe até a base dele
 //   chegar ao corte de cima (todas as linhas andam a mesma distância).
+// A altura vem de getBoundingClientRect, com casas decimais: offsetHeight arredonda, e o erro se multiplica pelo
+// tamanho do caminho (na linha de cima, que anda umas 6 alturas, sobrava uma tira de até 3 px das letras).
+const alturaExata = el => el.getBoundingClientRect().height;
+// Tinta das letras acima da altura das maiúsculas (acentos e a sobra das letras redondas), mais 1 px para a borda
+// suavizada. A caixa da linha de cima é aparada nessa altura, então a parte anda isso a mais para a tinta não passar do corte.
+const regua = document.createElement('canvas').getContext('2d');
+export function tintaAcima(el) {
+  const e = getComputedStyle(el);
+  regua.font = `${e.fontStyle} ${e.fontWeight} ${e.fontSize} ${e.fontFamily}`;
+  const texto = e.textTransform === 'uppercase' ? el.textContent.toUpperCase() : el.textContent;
+  return Math.max(0, regua.measureText(texto).actualBoundingBoxAscent - regua.measureText('H').actualBoundingBoxAscent) + 1;
+}
 function recortar(i) {
   const t = textos[i];
   if (!t.titulo || !t.cima || !t.negrito || !t.texto) return;
@@ -161,7 +195,7 @@ function recortar(i) {
     partes.forEach((el, k) => {
       const m = caixa(s.masks[k]);
       Object.assign(s.masks[k].style, { overflow: 'visible', clipPath: `inset(-100vh -100vw ${m.r.bottom - corteCima}px -100vw)` });
-      el.dataset.escondido = String((100 * (corteCima - m.topo)) / el.offsetHeight);
+      el.dataset.escondido = String((100 * (corteCima + tintaAcima(el) - m.topo)) / alturaExata(el));
     });
   }
   const debaixo = [t.negrito, t.texto];
@@ -170,7 +204,7 @@ function recortar(i) {
     s.lines.forEach((el, k) => {
       const m = caixa(s.masks[k]);
       Object.assign(s.masks[k].style, { overflow: 'visible', clipPath: `inset(${corteBaixo - m.r.top}px -100vw -100vh -100vw)` });
-      el.dataset.escondido = String((100 * (corteCima - base)) / el.offsetHeight);
+      el.dataset.escondido = String((100 * (corteCima - base)) / alturaExata(el));
     });
   }
 }
@@ -565,7 +599,7 @@ addEventListener('orientationchange', recortarTudo);
 
 const modoMedir = new URLSearchParams(location.search).get('medir');
 if (modoMedir !== null) {
-  import('./medir.js').then(m => { medicao = m.iniciar({ slides, palco, textos, modo: modoMedir === 'tempo-real' ? 'tempo-real' : 'passo' }); });
+  import('./medir.js').then(m => { medicao = m.iniciar({ slides, palco, textos, tintaAcima, modo: modoMedir === 'tempo-real' ? 'tempo-real' : 'passo' }); });
   window.__carrossel = { estado, visual, comando, get troca() { return troca; }, get introducao() { return introducao; } };
 }
 
