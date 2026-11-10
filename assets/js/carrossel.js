@@ -1,10 +1,11 @@
 // Carrossel do Início: monta os cartões a partir dos slides do HTML, posiciona tudo com a geometria
 // medida e anima a troca de slide com os tempos e as curvas do vídeo (spec 7.1).
-import { chegada, descobrir, fecharMenu, reduzirMovimento } from './comum.js';
+import { chegada, descobrir, fecharMenu, navegarCom, reduzirMovimento } from './comum.js';
 import { criarCarrossel, criarFiltroDeGesto, numeroRomano } from './estado.js';
 import { calcularCartoes } from './geometria.js';
 import { cronograma } from './cronograma.js';
 import { criarGiro } from './giro.js';
+import { criarSegurar } from './segurar.js';
 
 const { gsap, SplitText, Observer } = window;
 
@@ -121,13 +122,16 @@ export function trocarSlideAtivo(i, { anunciar = true } = {}) {
 
 const textos = slides.map(s => ({ linha: s.el.querySelector('.slide__linha'), titulo: null, cima: null, negrito: null, texto: null }));
 let pronto = false;
+let abrindo = false;
+// Índice do slide cujo texto está à mostra (−1 durante uma troca ou antes da abertura).
+let textoVisivel = -1;
 
 // Folga na máscara para acentos e letras que passam da caixa (ex.: "Á" em "OLÁ").
 const folgar = mascaras => gsap.set(mascaras, { paddingBlock: '.15em', marginBlock: '-.15em' });
 
 function separar() {
   for (const [i, s] of slides.entries()) {
-    const visivel = () => (i === visual.atual ? 0 : ESCONDIDO);
+    const visivel = () => (i === textoVisivel ? 0 : ESCONDIDO);
     const t = textos[i];
     t.titulo = SplitText.create(s.el.querySelector('.slide__titulo a'), { type: 'words', mask: 'words', aria: 'auto' });
     folgar(t.titulo.masks);
@@ -141,7 +145,7 @@ function separar() {
         },
       });
     }
-    gsap.set(t.linha, { opacity: i === visual.atual ? 1 : 0 });
+    gsap.set(t.linha, { opacity: i === textoVisivel ? 1 : 0 });
   }
   pronto = true;
 }
@@ -184,6 +188,7 @@ function reindexar(para) {
 
 function fimDaTroca(para) {
   troca = null;
+  textoVisivel = para;
   medicao?.fim();
   history.replaceState(null, '', `#${slides[para].id}`);
   carregarFotos(2);
@@ -196,6 +201,7 @@ function executarTroca({ de, para, passos }) {
   // Fotos do caminho todo (saltos pelo menu) e dos vizinhos do destino.
   carregarFotos(Math.abs(passos) + 1, de);
   carregarFotos(1, para);
+  textoVisivel = -1;
   if (reduzirMovimento) {
     trocarSemMovimento(de, para);
     return;
@@ -267,7 +273,7 @@ const giro = reduzirMovimento ? null : criarGiro({ espera: 6000 });
 
 // Única porta de entrada para trocar de slide.
 export function comando(alvo, { automatico = false } = {}) {
-  if (!pronto) return;
+  if (!pronto || abrindo) return; // comandos durante a abertura do site são ignorados
   if (!automatico) giro?.interagiu();
   const resposta = estado.pedir(alvo);
   if (resposta.resposta === 'iniciar') executarTroca(resposta);
@@ -352,6 +358,125 @@ document.addEventListener('keydown', evento => {
   comando(alvo);
 });
 
+/* ---------- Clique e segure, título e saída para outra página (spec 7.2) ---------- */
+
+const segurar = criarSegurar({ duracao: 600 });
+const anelDeProgresso = botao.querySelector('.segurar__progresso');
+let saindo = false;
+
+const podeAbrir = () => pronto && !abrindo && !estado.ocupado && !saindo;
+
+function abrir(i) {
+  if (saindo) return;
+  saindo = true;
+  giro?.interagiu();
+  navegarCom('branca', slides[i].abre, { cabecalho: slides[i].cabecalho });
+}
+
+function acompanharSegurar() {
+  const agora = performance.now();
+  gsap.set(anelDeProgresso, { strokeDashoffset: 1 - segurar.progresso(agora) });
+  if (!segurar.completo(agora)) return;
+  gsap.ticker.remove(acompanharSegurar);
+  segurar.soltar(agora);
+  abrir(visual.atual);
+}
+
+function soltarBotao() {
+  gsap.ticker.remove(acompanharSegurar);
+  botao.classList.remove('is-segurando');
+  if (!segurar.ativo) return;
+  segurar.soltar(performance.now());
+  gsap.to(anelDeProgresso, { strokeDashoffset: 1, duration: 0.2 });
+}
+
+botao.addEventListener('pointerdown', evento => {
+  if (evento.button !== 0 || !podeAbrir()) return;
+  segurar.apertar(performance.now());
+  botao.classList.add('is-segurando');
+  gsap.ticker.add(acompanharSegurar);
+});
+for (const tipo of ['pointerup', 'pointercancel', 'pointerleave']) botao.addEventListener(tipo, soltarBotao);
+// Enter e Espaço geram um clique com detail 0 e abrem na hora; um clique de mouse (detail ≥ 1) não abre: é preciso segurar.
+botao.addEventListener('click', evento => {
+  if (evento.detail === 0 && podeAbrir()) abrir(visual.atual);
+});
+// Segurar o dedo não abre o menu do celular.
+botao.addEventListener('contextmenu', evento => evento.preventDefault());
+
+// Clicar no título abre com a mesma cortina (os cliques logo depois de um arrasto já foram cancelados acima).
+document.addEventListener('click', evento => {
+  const link = evento.target instanceof Element && evento.target.closest('.slide__titulo a');
+  if (!link) return;
+  evento.preventDefault();
+  if (podeAbrir()) abrir(visual.atual);
+});
+
+// Volta pelo cache do navegador: o botão e a saída voltam ao repouso (a cortina o comum.js recolhe).
+addEventListener('pageshow', evento => {
+  if (!evento.persisted) return;
+  saindo = false;
+  soltarBotao();
+  gsap.set(anelDeProgresso, { strokeDashoffset: 1 });
+});
+
+/* ---------- Abertura do site (derivada, spec 7.4) ---------- */
+
+let introducao = null;
+const moldura = ['.topo', '.lateral', '.sociais', '.paginacao', '.segurar'].map(s => document.querySelector(s));
+const espera = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+async function abrirSite() {
+  await document.fonts.ready;
+  const raiz = document.documentElement;
+
+  // Chegando pela cortina preta (voltar de uma matéria): o slide aparece pronto e a cortina sai pelo alto.
+  if (chegada === 'preta') {
+    textoVisivel = visual.atual;
+    separar();
+    raiz.classList.remove('abrindo');
+    await descobrir();
+    avisarTextoEntrou();
+    return;
+  }
+
+  separar(); // textoVisivel = −1: todos os textos começam escondidos
+  // Espera a foto do slide de entrada (no máximo 1,5 s), para o cartão não aparecer vazio.
+  await Promise.race([slides[visual.atual].foto.decode().catch(() => {}), espera(1500)]);
+
+  const cartoes = slides.map(s => s.cartao);
+  const textoAtual = slides[visual.atual].el;
+  gsap.set([...moldura, ...cartoes], { opacity: 0 });
+  abrindo = true;
+  const tl = gsap.timeline({
+    onComplete: () => {
+      abrindo = false;
+      introducao = null;
+      textoVisivel = visual.atual;
+      avisarTextoEntrou();
+    },
+  });
+
+  if (reduzirMovimento) {
+    const t = textos[visual.atual];
+    gsap.set([...t.titulo.words, ...linhas(visual.atual, 'cima'), ...linhas(visual.atual, 'negrito'), ...linhas(visual.atual, 'texto')], { yPercent: 0 });
+    gsap.set(t.linha, { opacity: 1 });
+    gsap.set(textoAtual, { opacity: 0 });
+    raiz.classList.remove('abrindo');
+    tl.to([...moldura, ...cartoes, textoAtual], { opacity: 1, duration: 0.3 });
+  } else {
+    // A tela começa preta; o cartão aparece (0,3 s), cresce (etapa 5) e o texto entra (etapa 6).
+    visual.abertura = 0;
+    posicionar();
+    raiz.classList.remove('abrindo');
+    tl.to(moldura, { opacity: 1, duration: 0.4 }, 0);
+    tl.to(cartoes, { opacity: 1, duration: 0.3 }, 0);
+    tl.to(visual, { abertura: 1, duration: 0.5, ease: 'crescer', onUpdate: posicionar }, 0.3);
+    tl.add(entrarTexto(visual.atual), 0.3 + 0.5 + 0.11);
+  }
+  introducao = tl;
+}
+
 /* ---------- Início ---------- */
 
 trocarNumeral(visual.atual);
@@ -367,13 +492,7 @@ addEventListener('orientationchange', posicionar);
 const modoMedir = new URLSearchParams(location.search).get('medir');
 if (modoMedir !== null) {
   import('./medir.js').then(m => { medicao = m.iniciar({ slides, palco, textos, modo: modoMedir === 'tempo-real' ? 'tempo-real' : 'passo' }); });
-  window.__carrossel = { estado, visual, comando, get troca() { return troca; } };
+  window.__carrossel = { estado, visual, comando, get troca() { return troca; }, get introducao() { return introducao; } };
 }
 
-// Por enquanto o texto inicial já aparece pronto; a abertura animada do site avisa no fim dela.
-document.fonts.ready.then(() => {
-  separar();
-  avisarTextoEntrou();
-});
-
-if (chegada === 'preta') descobrir();
+abrirSite();

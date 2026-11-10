@@ -22,6 +22,8 @@ html.js, html.js body { height: 100%; overflow: hidden; }
 }
 .slide.is-atual { visibility: visible; }
 .slide a, .slide button { pointer-events: auto; }
+/* Até a abertura do site começar, nada aparece (o script tira a classe; se falhar, ela sai sozinha em 4 s). */
+.abrindo .slide, .abrindo .trilho, .abrindo .topo, .abrindo .lateral, .abrindo .sociais, .abrindo .paginacao, .abrindo .segurar { visibility: hidden; }
 
 .slide__titulo {
   /* −5,32u e não −5,456u: o topo medido no vídeo inclui a sobra das letras redondas acima das maiúsculas. */
