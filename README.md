@@ -1,6 +1,6 @@
 # Portfólio do Angelo
 
-Site publicado em <https://angelojr-web.github.io>, feito só com HTML, CSS e JavaScript, sem dependências e sem etapa de build. O visual segue o Design System [Portfólio Angelo](https://claude.ai/artifact/WBaJfFJApxVyjRKZv9w4zs).
+Site publicado em <https://angelojr-web.github.io>, feito com HTML, CSS e JavaScript, sem etapa de build. As animações usam o [GSAP](https://gsap.com), guardado no próprio repositório. O visual segue o conceito ["Blue Planet" Carousel Concept](https://dribbble.com/shots/7129691--Blue-Planet-Carousel-Concept), de Giulio Cuscito.
 
 ## Ver no computador
 
@@ -8,41 +8,55 @@ Site publicado em <https://angelojr-web.github.io>, feito só com HTML, CSS e Ja
 npm run dev
 ```
 
-O site abre em <http://localhost:4173>.
+O site abre em <http://localhost:4173>. Os testes rodam com `npm test`.
 
 ## Como editar
 
 | O que mudar | Onde |
 | --- | --- |
-| Textos, projetos, links e números | `index.html` |
-| Slides do carrossel | Saem de cada `<article class="projeto">` do `index.html` |
-| Foto da seção Sobre | `assets/img/angelo.webp`, em 480 × 600 |
-| Imagens ao compartilhar o link | `assets/img/og/`, em 1200 × 630 |
-| Capa de um projeto | `assets/img/capas/`, em 640 × 1104 |
-| Fundo desfocado de um slide | `assets/img/fundos/`, em 320 × 552 |
-| Cores, espaços e medidas | `assets/css/tokens.css` |
-| Componentes do Design System | `assets/css/sistema.css` |
-| Partes próprias do site | `assets/css/site.css` |
-| Página Sobre | `sobre.html` e `assets/css/sobre.css` |
-| Linha do tempo da página Sobre | Cada `<li class="tempo__item">` do `sobre.html` vira um capítulo do anel |
-| Páginas de projeto | `projetos/`, com um HTML por projeto, e `assets/css/projeto.css` |
+| Textos e links dos slides | Cada `<article class="slide">` do `index.html` |
+| Fotos dos slides | `assets/img/slides/<nome>-{960,1600,2400}.webp`, em 16:9 |
+| Páginas de projeto | `projetos/`, com um HTML por projeto |
 | Telas das páginas de projeto | `assets/img/telas/`, em 1600 × 1000 |
-| Carrossel, menu e formulário | `assets/js/site.js` |
-| Tempo de cada slide no giro automático | `assets/css/site.css`, na regra `.pa-hero.is-auto` |
+| Página Sobre e formulário de contato | `sobre.html` |
+| Foto do "Quem sou" | `assets/img/angelo.webp`, em 480 × 600 |
+| Imagens ao compartilhar o link | `assets/img/og/`, em 1200 × 630 |
+| Cores, fontes e tamanhos | `assets/css/tokens.css` |
+| Estilos do Início | `assets/css/inicio.css` |
+| Estilos das páginas de projeto e da Sobre | `assets/css/materia.css` |
+| Cabeçalho, menu, laterais e cortinas | `assets/css/comum.css` e `assets/js/comum.js` |
+| Tempos da troca de slide | `assets/js/cronograma.js` |
+| Curvas das animações | `assets/js/curvas.js` |
+| Tamanho dos cartões e efeito de profundidade | `assets/js/geometria.js`, em `MEDIDAS` |
+| Espera do giro automático (6 s) e do "clique e segure" (600 ms) | `assets/js/carrossel.js` |
+
+### Atributos de cada slide
+
+| Atributo | Para que serve |
+| --- | --- |
+| `id` | Endereço do slide, como em `index.html#vaultcore` |
+| `data-nome` | Nome do slide no menu |
+| `data-etiqueta` | Etiqueta vertical à esquerda |
+| `data-abre` | Página que abre no clique do título ou no "clique e segure" |
+| `data-foto` | Começo do nome dos arquivos da foto, sem o tamanho |
+| `data-materia-titulo` e `data-materia-italico` | Título e itálico que a cortina branca mostra; precisam ser iguais aos da página que abre |
 
 ### Adicionar um projeto
 
-1. Copie um `<article class="projeto">` no `index.html` e troque o `id`, os textos e os links.
-2. Preencha `data-titulo` com as duas linhas do título separadas por `|`, como em `PARCELAS|– FINANÇAS`.
-3. Preencha `data-pagina`, `data-tag` e `data-fundo`.
-4. Coloque a capa e o fundo nas pastas de imagens.
-5. Copie uma página de `projetos/`, troque o conteúdo e ajuste o link do próximo projeto na página anterior.
+1. Copie um `<article class="slide">` no `index.html` e troque o `id`, os textos e os `data-*`.
+2. Coloque a foto em `assets/img/slides/`, nos três tamanhos.
+3. Acrescente o slide no menu (`.menu__slides`) de todas as páginas.
+4. Copie uma página de `projetos/`, troque o conteúdo e ajuste o "Próximo projeto" da página anterior.
 
-O carrossel se monta sozinho a partir dessa lista. Mantenha entre 5 e 7 slides, contando o de apresentação, para o anel não ficar com buracos.
+O carrossel, a numeração e a paginação se montam sozinhos a partir dos slides. `npm test` confere se os títulos, os links e as fotos batem.
+
+### Conferir as animações
+
+Abra o Início com `?medir` no endereço: a troca de slide pausa a cada passo, e o console mostra o relatório `[medir]` comparando tempos e medidas com os do vídeo de referência. Com `?reduzir`, o site mostra a versão com movimento reduzido.
 
 ### Formulário de contato
 
-O site não tem servidor. Por isso o formulário abre o app de e-mail de quem visita, com a mensagem pronta para o endereço em `data-email`, no `index.html`.
+O site não tem servidor. Por isso o formulário da Sobre abre o app de e-mail de quem visita, com a mensagem pronta para o endereço em `data-email`.
 
 ## Publicar
 
@@ -65,3 +79,8 @@ Fotos do Unsplash, todas sob a [Licença Unsplash](https://unsplash.com/license)
 | `primeiros-passos` | trilha entre picos de montanha | [Valeriia Kryshchuk](https://unsplash.com/@mooonshine) | [t6BwhiIQusU](https://unsplash.com/photos/t6BwhiIQusU) | 50% 50% |
 | `meu-cofre` | cadeado antigo | [Zoshua Colah](https://unsplash.com/@zoshuacolah) | [mknpZ5FY2bo](https://unsplash.com/photos/mknpZ5FY2bo) | 50% 50% |
 | `este-site` | a Terra à noite vista do espaço | [Allison Saeng](https://unsplash.com/@allisonsaeng) | [X1rfqK8JDL0](https://unsplash.com/photos/X1rfqK8JDL0) | 50% 50% |
+
+## Fontes e bibliotecas
+
+- Bellefair, Lato e Cormorant Garamond, sob a SIL Open Font License; os textos das licenças estão em `assets/fonts/`.
+- GSAP 3.15.1, sob a licença gratuita "Standard 'No Charge' License"; detalhes em `assets/vendor/gsap/LICENCA.md`.
