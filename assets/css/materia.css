@@ -7,6 +7,8 @@
    Chegando pela cortina branca, cabeça e VOLTAR já aparecem: a cortina mostrou os mesmos, no mesmo lugar.
    (A cabeça e o VOLTAR ficam no comum.css, porque a cortina branca do Início também usa.) */
 .abrindo:not(.chegou-branca) .materia .materia__cabeca > *, .abrindo:not(.chegou-branca) .materia__voltar, .abrindo .grade__item { opacity: 0; }
+/* As seções abaixo da grade também esperam: o script esconde as partes delas e anima cada uma ao rolar. */
+.abrindo .materia__secao, .abrindo .materia__ficha, .abrindo .materia__acoes, .abrindo .materia__nota, .abrindo .materia__proximo { opacity: 0; }
 
 /* Grade de cartões quadrados (3 colunas de 24,5u com 2,6u de espaço). */
 .grade { list-style: none; margin: 0 auto; padding: 0; display: grid; grid-template-columns: repeat(3, var(--grade-coluna)); gap: var(--grade-espaco); justify-content: center; }

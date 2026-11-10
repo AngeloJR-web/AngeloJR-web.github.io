@@ -24,6 +24,7 @@ O site abre em <http://localhost:4173>. Os testes rodam com `npm test`.
 | Cores, fontes e tamanhos | `assets/css/tokens.css` |
 | Estilos do Início | `assets/css/inicio.css` |
 | Estilos das páginas de projeto e da Sobre | `assets/css/materia.css` |
+| Animações ao rolar a Sobre e as páginas de projeto | `assets/js/revelar.js` |
 | Cabeçalho, menu, laterais e cortinas | `assets/css/comum.css` e `assets/js/comum.js` |
 | Tempos da troca de slide | `assets/js/cronograma.js` |
 | Curvas das animações | `assets/js/curvas.js` |

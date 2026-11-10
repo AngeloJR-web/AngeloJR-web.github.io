@@ -2,6 +2,7 @@
 import { chegada, descobrir, navegarCom, reduzirMovimento } from './comum.js';
 import { unidade } from './geometria.js';
 import { montarMailto } from './contato.js';
+import { revelarAoRolar } from './revelar.js';
 
 const { gsap } = window;
 const raiz = document.documentElement;
@@ -12,16 +13,17 @@ const raiz = document.documentElement;
 const partesDaCabeca = [...document.querySelectorAll('.materia .materia__cabeca > *, .materia__voltar')];
 const cartoes = [...document.querySelectorAll('.grade__item')];
 
-function entrar() {
+// naTela: os cartões da grade que aparecem na tela na abertura (os de baixo entram ao rolar, pelo revelar.js).
+function entrar(naTela) {
   // Chegando pela cortina branca, cabeça e VOLTAR já estão à mostra: a cortina mostrou os mesmos, no mesmo lugar.
   const cabecaAnima = chegada !== 'branca';
   if (cabecaAnima) gsap.set(partesDaCabeca, { opacity: 0 });
-  gsap.set(cartoes, { opacity: 0 });
+  gsap.set(naTela, { opacity: 0 });
   raiz.classList.remove('abrindo', 'chegou-branca');
 
   const tl = gsap.timeline();
   if (reduzirMovimento) {
-    tl.to([...(cabecaAnima ? partesDaCabeca : []), ...cartoes], { opacity: 1, duration: 0.3 });
+    tl.to([...(cabecaAnima ? partesDaCabeca : []), ...naTela], { opacity: 1, duration: 0.3 });
     return tl;
   }
   let inicioDosCartoes = 0;
@@ -32,9 +34,9 @@ function entrar() {
   // Cada cartão sobe da borda de baixo da tela e aparece em 0,2 s, 0,02 s depois do anterior (medido no vídeo).
   // A distância é medida antes de qualquer movimento: o GSAP avalia o valor inicial de novo quando cada cartão começa,
   // e aí a posição já estaria deslocada.
-  const distancias = cartoes.map(el => Math.max(60, innerHeight - el.getBoundingClientRect().top));
-  tl.fromTo(cartoes, { opacity: 0 }, { opacity: 1, duration: 0.2, stagger: 0.02 }, inicioDosCartoes);
-  tl.fromTo(cartoes, { y: i => distancias[i] }, { y: 0, duration: 0.6, ease: 'expo.out', stagger: 0.02 }, inicioDosCartoes);
+  const distancias = naTela.map(el => Math.max(60, innerHeight - el.getBoundingClientRect().top));
+  tl.fromTo(naTela, { opacity: 0 }, { opacity: 1, duration: 0.2, stagger: 0.02 }, inicioDosCartoes);
+  tl.fromTo(naTela, { y: i => distancias[i] }, { y: 0, duration: 0.6, ease: 'expo.out', stagger: 0.02 }, inicioDosCartoes);
   return tl;
 }
 
@@ -159,4 +161,7 @@ function iniciarContato() {
 
 if (chegada === 'preta') descobrir();
 iniciarContato();
-entrar();
+// As seções e os cartões que estão abaixo da tela na abertura animam ao rolar; os demais entram agora.
+const abaixoDaTela = cartoes.filter(el => el.getBoundingClientRect().top >= innerHeight);
+revelarAoRolar({ cartoes: abaixoDaTela, reduzirMovimento });
+entrar(cartoes.filter(el => !abaixoDaTela.includes(el)));
