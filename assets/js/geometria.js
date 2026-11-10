@@ -9,6 +9,10 @@ export const MEDIDAS = {
   escalaFotoCartao: 0.87,
   coberturaFoto: 1.17,
   parallax: 0.38,
+  // Enquanto o cartão atual encolhe ou cresce, cada vizinho anda esta fração do que anda a borda dele
+  // (medido no vídeo: o vão passa de 2,2u para ~4,5% da largura no meio do crescimento).
+  afastamentoEncolher: 1.08,
+  afastamentoCrescer: 1.23,
 };
 
 // u: 1% da largura do maior retângulo 16:9 que cabe na janela.
@@ -16,7 +20,7 @@ export function unidade(largura, altura) {
   return Math.min(largura, altura * 1.7778) / 100;
 }
 
-export function calcularCartoes({ largura, altura, total, atual, abertura, deslocamento }) {
+export function calcularCartoes({ largura, altura, total, atual, abertura, deslocamento, afastamento = 1 }) {
   const u = unidade(largura, altura);
   const espaco = MEDIDAS.espacoU * u;
   const cw = MEDIDAS.cartaoLargura * largura;
@@ -39,10 +43,11 @@ export function calcularCartoes({ largura, altura, total, atual, abertura, deslo
       ? MEDIDAS.escalaFotoCartao + (1 - MEDIDAS.escalaFotoCartao) * abertura
       : MEDIDAS.escalaFotoCartao;
 
-    // Os vizinhos acompanham as bordas do cartão atual, sempre a um espaço de distância.
+    // Os vizinhos ficam a um espaço do cartão atual no modo cartão e, quando ele cresce ou encolhe,
+    // andam "afastamento" vezes o que anda a borda dele (1 mantém o espaço constante).
     const centroAntes = eAtual
       ? meio
-      : meio + Math.sign(d) * (w0 / 2 + espaco + cw / 2 + (Math.abs(d) - 1) * passo);
+      : meio + Math.sign(d) * (Math.abs(d) * passo + afastamento * (w0 - cw) / 2);
     const centroX = centroAntes - deslocamento * passo;
     const desvioFoto = -MEDIDAS.parallax * (centroX - meio);
     const visivel = centroX + w / 2 > 0 && centroX - w / 2 < largura;

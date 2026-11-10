@@ -2,7 +2,7 @@
 // medida e anima a troca de slide com os tempos e as curvas do vídeo (spec 7.1).
 import { chegada, descobrir, fecharMenu, navegarCom, reduzirMovimento } from './comum.js';
 import { criarCarrossel, criarFiltroDeGesto, numeroRomano } from './estado.js';
-import { calcularCartoes } from './geometria.js';
+import { MEDIDAS, calcularCartoes, unidade } from './geometria.js';
 import { cronograma } from './cronograma.js';
 import { criarGiro } from './giro.js';
 import { criarSegurar } from './segurar.js';
@@ -15,8 +15,11 @@ const total = artigos.length;
 
 // Telas em pé precisam cobrir a altura (foto 16:9 → 178vh de largura); num notebook, 1600 px bastam.
 const TAMANHOS = '(orientation: portrait) 178vh, (min-width: 1600px) 117vw, min(117vw, 1600px)';
-// Quanto o texto desce para sumir na máscara (a máscara tem uma folga de .15em para os acentos).
+// Quanto o numeral desce para sumir na máscara dele (a máscara tem uma folga de .15em para os acentos).
 const ESCONDIDO = 120;
+// O texto nasce e some na linha fina (medido no vídeo): acima dela, só aparece até 0,7u antes dela; abaixo, só a partir
+// de 0,7u depois dela.
+const FOLGA_DA_LINHA = 0.7;
 
 export const slides = artigos.map(el => ({
   el,
@@ -33,7 +36,8 @@ export const slides = artigos.map(el => ({
 const indiceDoEndereco = () => Math.max(0, slides.findIndex(s => `#${s.id}` === location.hash));
 
 export const estado = criarCarrossel({ total, inicial: indiceDoEndereco() });
-export const visual = { atual: estado.atual, abertura: 1, deslocamento: 0 };
+// afastamento: quanto os vizinhos andam em relação à borda do cartão atual enquanto ele encolhe ou cresce.
+export const visual = { atual: estado.atual, abertura: 1, deslocamento: 0, afastamento: 1 };
 
 /* ---------- Montagem ---------- */
 
@@ -129,45 +133,108 @@ let textoVisivel = -1;
 // Folga na máscara para acentos e letras que passam da caixa (ex.: "Á" em "OLÁ").
 const folgar = mascaras => gsap.set(mascaras, { paddingBlock: '.15em', marginBlock: '-.15em' });
 
+const linhas = (i, parte) => textos[i][parte].lines;
+const partesDoTexto = i => [...textos[i].titulo.words, ...linhas(i, 'cima'), ...linhas(i, 'negrito'), ...linhas(i, 'texto')];
+
+// Deslocamento (yPercent) que leva cada palavra ou linha para trás da linha fina; calculado em recortar().
+const escondido = el => Number(el.dataset.escondido) || ESCONDIDO;
+const valorEscondido = (_, el) => escondido(el);
+
+// Recorta o texto do slide i na linha fina e calcula quanto cada parte anda para sumir nela:
+// - acima (título e linha de cima): a máscara deixa ver só até o corte de cima, e a parte desce até o topo dela chegar lá;
+// - abaixo (negrito e parágrafo): a máscara deixa ver só a partir do corte de baixo, e o bloco sobe até a base dele
+//   chegar ao corte de cima (todas as linhas andam a mesma distância).
+function recortar(i) {
+  const t = textos[i];
+  if (!t.titulo || !t.cima || !t.negrito || !t.texto) return;
+  const u = unidade(innerWidth, innerHeight);
+  const linha = t.linha.getBoundingClientRect();
+  const corteCima = linha.top - FOLGA_DA_LINHA * u;
+  const corteBaixo = linha.bottom + FOLGA_DA_LINHA * u;
+  const caixa = mascara => {
+    const r = mascara.getBoundingClientRect();
+    const e = getComputedStyle(mascara);
+    return { r, topo: r.top + parseFloat(e.paddingTop), base: r.bottom - parseFloat(e.paddingBottom) };
+  };
+  for (const s of [t.titulo, t.cima]) {
+    const partes = s === t.titulo ? s.words : s.lines;
+    partes.forEach((el, k) => {
+      const m = caixa(s.masks[k]);
+      Object.assign(s.masks[k].style, { overflow: 'visible', clipPath: `inset(-100vh -100vw ${m.r.bottom - corteCima}px -100vw)` });
+      el.dataset.escondido = String((100 * (corteCima - m.topo)) / el.offsetHeight);
+    });
+  }
+  const debaixo = [t.negrito, t.texto];
+  const base = Math.max(...debaixo.flatMap(s => s.masks.map(m => caixa(m).base)));
+  for (const s of debaixo) {
+    s.lines.forEach((el, k) => {
+      const m = caixa(s.masks[k]);
+      Object.assign(s.masks[k].style, { overflow: 'visible', clipPath: `inset(${corteBaixo - m.r.top}px -100vw -100vh -100vw)` });
+      el.dataset.escondido = String((100 * (corteCima - base)) / el.offsetHeight);
+    });
+  }
+}
+
+// Na troca, o texto que não está à mostra fica atrás da linha fina.
+function esconderSeOculto(i) {
+  if (i !== textoVisivel) gsap.set(partesDoTexto(i), { yPercent: valorEscondido });
+}
+
 function separar() {
   for (const [i, s] of slides.entries()) {
-    const visivel = () => (i === textoVisivel ? 0 : ESCONDIDO);
     const t = textos[i];
     t.titulo = SplitText.create(s.el.querySelector('.slide__titulo a'), { type: 'words', mask: 'words', aria: 'auto' });
     folgar(t.titulo.masks);
-    gsap.set(t.titulo.words, { yPercent: visivel() });
     for (const parte of ['cima', 'negrito', 'texto']) {
       t[parte] = SplitText.create(s.el.querySelector(`.slide__${parte}`), {
         type: 'lines', mask: 'lines', aria: 'auto', autoSplit: true,
         onSplit(self) {
           folgar(self.masks);
-          gsap.set(self.lines, { yPercent: visivel() });
+          // Na primeira separação as outras partes ainda não existem; o fim do laço cuida delas.
+          if (!pronto) return;
+          recortar(i);
+          gsap.set(self.lines, { yPercent: i === textoVisivel ? 0 : valorEscondido });
         },
       });
     }
+    recortar(i);
+    gsap.set(partesDoTexto(i), { yPercent: i === textoVisivel ? 0 : valorEscondido });
     gsap.set(t.linha, { opacity: i === textoVisivel ? 1 : 0 });
   }
   pronto = true;
 }
 
-const linhas = (i, parte) => textos[i][parte].lines;
+// Ao redimensionar, os cortes e as distâncias mudam com a tela (fora de uma troca, para não brigar com ela).
+function recortarTudo() {
+  if (!pronto || troca) return;
+  for (let i = 0; i < total; i++) {
+    recortar(i);
+    esconderSeOculto(i);
+  }
+}
 
-// Entrada do texto do slide i (spec 7.1, etapa 6), com tempos relativos ao começo da entrada.
+// Entrada do texto do slide i (spec 7.1, etapa 6). Os tempos são relativos a entrada.comeca, que é quando a linha de
+// cima começa a subir (antes da referência "inicio"): quem chama põe esta linha do tempo nesse instante.
 export function entrarTexto(i) {
   const t = textos[i];
   const c = cronograma({ palavrasSai: 1, palavrasEntra: t.titulo.words.length });
   const e = c.entrada;
-  const rel = parte => parte.inicio - e.inicio;
+  const rel = parte => parte.inicio - e.comeca;
   const tl = gsap.timeline();
   tl.fromTo(t.linha, { opacity: 0 }, { opacity: 1, duration: e.linha.duracao }, rel(e.linha));
   t.titulo.words.forEach((palavra, k) => {
-    tl.fromTo(palavra, { yPercent: ESCONDIDO }, { yPercent: 0, duration: e.palavras[k].duracao, ease: 'power3.out' }, rel(e.palavras[k]));
+    tl.fromTo(palavra, { yPercent: escondido(palavra) }, { yPercent: 0, duration: e.palavras[k].duracao, ease: 'power3.out' }, rel(e.palavras[k]));
   });
-  tl.fromTo(linhas(i, 'cima'), { yPercent: ESCONDIDO }, { yPercent: 0, duration: e.cima.duracao, ease: 'power3.out' }, rel(e.cima));
-  tl.fromTo(linhas(i, 'negrito'), { yPercent: ESCONDIDO }, { yPercent: 0, duration: e.negrito.duracao, ease: 'power3.out' }, rel(e.negrito));
-  tl.fromTo(linhas(i, 'texto'), { yPercent: ESCONDIDO }, { yPercent: 0, duration: e.texto.duracao, ease: 'power3.out' }, rel(e.texto));
+  tl.fromTo(linhas(i, 'cima'), { yPercent: valorEscondido }, { yPercent: 0, duration: e.cima.duracao, ease: 'power3.out' }, rel(e.cima));
+  tl.fromTo([...linhas(i, 'negrito'), ...linhas(i, 'texto')], { yPercent: valorEscondido }, { yPercent: 0, duration: e.bloco.duracao, ease: 'power3.out' }, rel(e.bloco));
   return tl;
 }
+
+// Quanto antes da referência da entrada a linha do tempo de entrarTexto(i) começa.
+const antecipacao = i => {
+  const e = cronograma({ palavrasSai: 1, palavrasEntra: textos[i].titulo.words.length }).entrada;
+  return e.inicio - e.comeca;
+};
 
 /* ---------- Troca de slide ---------- */
 
@@ -213,13 +280,14 @@ function executarTroca({ de, para, passos }) {
 
   // 1. Texto sai: cada palavra desce na máscara; depois a linha de cima, o negrito e o parágrafo.
   sai.titulo.words.forEach((palavra, k) => {
-    tl.to(palavra, { yPercent: ESCONDIDO, duration: c.saida.palavras[k].duracao, ease: 'power2.in' }, c.saida.palavras[k].inicio);
+    tl.to(palavra, { yPercent: escondido(palavra), duration: c.saida.palavras[k].duracao, ease: 'power2.in' }, c.saida.palavras[k].inicio);
   });
-  tl.to(linhas(de, 'cima'), { yPercent: ESCONDIDO, duration: c.saida.cima.duracao, ease: 'power2.in' }, c.saida.cima.inicio);
-  tl.to([...linhas(de, 'negrito'), ...linhas(de, 'texto')], { yPercent: ESCONDIDO, duration: c.saida.resto.duracao, ease: 'power2.in' }, c.saida.resto.inicio);
+  tl.to(linhas(de, 'cima'), { yPercent: valorEscondido, duration: c.saida.cima.duracao, ease: 'power2.in' }, c.saida.cima.inicio);
+  tl.to([...linhas(de, 'negrito'), ...linhas(de, 'texto')], { yPercent: valorEscondido, duration: c.saida.resto.duracao, ease: 'power2.in' }, c.saida.resto.inicio);
   tl.to(sai.linha, { opacity: 0, duration: c.saida.linha.duracao }, c.saida.linha.inicio);
 
   // 3. Foto vira cartão.
+  tl.set(visual, { afastamento: MEDIDAS.afastamentoEncolher }, c.encolher.inicio);
   tl.to(visual, { abertura: 0, duration: c.encolher.duracao, ease: 'encolher', onUpdate: posicionar }, c.encolher.inicio);
 
   // 4. Cartões deslizam; numeral e etiqueta trocam entre 24% e 42% do deslize.
@@ -234,10 +302,11 @@ function executarTroca({ de, para, passos }) {
   tl.call(() => reindexar(para), null, c.deslizar.inicio + c.deslizar.duracao);
 
   // 5. Cartão cresce.
+  tl.set(visual, { afastamento: MEDIDAS.afastamentoCrescer }, c.crescer.inicio);
   tl.fromTo(visual, { abertura: 0 }, { abertura: 1, duration: c.crescer.duracao, ease: 'crescer', onUpdate: posicionar, immediateRender: false }, c.crescer.inicio);
 
   // 6. Texto entra.
-  tl.add(entrarTexto(para), c.entrada.inicio);
+  tl.add(entrarTexto(para), c.entrada.comeca);
 
   troca = tl;
   medicao?.inicio({ t0: performance.now(), de, para, passos, c, linhaDoTempo: tl });
@@ -469,12 +538,13 @@ async function abrirSite() {
   } else {
     // A tela começa preta; o cartão aparece (0,3 s), cresce (etapa 5) e o texto entra (etapa 6).
     visual.abertura = 0;
+    visual.afastamento = MEDIDAS.afastamentoCrescer;
     posicionar();
     raiz.classList.remove('abrindo');
     tl.to(moldura, { opacity: 1, duration: 0.4 }, 0);
     tl.to(cartoes, { opacity: 1, duration: 0.3 }, 0);
     tl.to(visual, { abertura: 1, duration: 0.5, ease: 'crescer', onUpdate: posicionar }, 0.3);
-    tl.add(entrarTexto(visual.atual), 0.3 + 0.5 + 0.11);
+    tl.add(entrarTexto(visual.atual), 0.3 + 0.5 + 0.11 - antecipacao(visual.atual));
   }
   introducao = tl;
 }
@@ -490,6 +560,8 @@ addEventListener('load', () => carregarFotos(1), { once: true });
 // posicionar() mexe em 6 elementos: dá para chamar direto em cada evento (inclusive no meio de uma troca).
 addEventListener('resize', posicionar);
 addEventListener('orientationchange', posicionar);
+addEventListener('resize', recortarTudo);
+addEventListener('orientationchange', recortarTudo);
 
 const modoMedir = new URLSearchParams(location.search).get('medir');
 if (modoMedir !== null) {

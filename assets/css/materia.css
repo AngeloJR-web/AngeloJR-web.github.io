@@ -2,19 +2,11 @@
    A cabeça (título, linha e itálico) fica no comum.css, porque a cortina branca do Início também usa. */
 
 .materia { position: relative; padding-bottom: calc(8 * var(--u)); }
-/* A grade começa a 24u do alto da página; com um itálico longo (3 linhas na Sobre), fica ao menos 2u abaixo dele. */
-.materia .materia__cabeca { min-height: calc(24 * var(--u)); padding-bottom: calc(2 * var(--u)); }
 
-/* Antes da entrada, cabeça e cartões esperam escondidos (o script mostra; se falhar, a classe sai em 4 s).
-   Chegando pela cortina branca, a cabeça já aparece: a cortina mostrou o mesmo título. */
-.abrindo:not(.chegou-branca) .materia .materia__cabeca > *, .abrindo .grade__item { opacity: 0; }
-
-/* VOLTAR: alinhado à esquerda da grade e com o centro no centro do itálico (17,8u + metade da altura das maiúsculas). */
-.materia__voltar {
-  position: absolute; left: calc(50% - (3 * var(--grade-coluna) + 2 * var(--grade-espaco)) / 2); top: calc(18.35 * var(--u) - 22px);
-  display: inline-flex; align-items: center; min-width: 44px; min-height: 44px;
-  font: 700 var(--tam-link)/1 var(--fonte-texto); letter-spacing: .1em; text-transform: uppercase; text-decoration: none;
-}
+/* Antes da entrada, cabeça, VOLTAR e cartões esperam escondidos (o script mostra; se falhar, a classe sai em 4 s).
+   Chegando pela cortina branca, cabeça e VOLTAR já aparecem: a cortina mostrou os mesmos, no mesmo lugar.
+   (A cabeça e o VOLTAR ficam no comum.css, porque a cortina branca do Início também usa.) */
+.abrindo:not(.chegou-branca) .materia .materia__cabeca > *, .abrindo:not(.chegou-branca) .materia__voltar, .abrindo .grade__item { opacity: 0; }
 
 /* Grade de cartões quadrados (3 colunas de 24,5u com 2,6u de espaço). */
 .grade { list-style: none; margin: 0 auto; padding: 0; display: grid; grid-template-columns: repeat(3, var(--grade-coluna)); gap: var(--grade-espaco); justify-content: center; }
@@ -146,13 +138,8 @@
 /* Grade: 2 colunas até 1024 px e 1 abaixo de 600 px; VOLTAR entra no fluxo no celular.
    A margem lateral deixa livres a etiqueta e a caixa social, que ficam fixas à esquerda. */
 @media (max-width: 1024px) {
-  .materia { --margem-materia: max(16px, calc(6 * var(--u))); }
   .grade { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .grade, .materia__ficha, .materia__secao, .materia__proximo { width: calc(100% - 2 * var(--margem-materia)); }
-  .materia__voltar { left: var(--margem-materia); }
-}
-@media (max-width: 767px) {
-  .materia__voltar { position: static; margin: 24px var(--margem-materia) 8px; }
 }
 @media (max-width: 599px) {
   .grade { grid-template-columns: 1fr; }

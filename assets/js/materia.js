@@ -8,11 +8,12 @@ const raiz = document.documentElement;
 
 /* ---------- Entrada (spec 7.2) ---------- */
 
-const partesDaCabeca = [...document.querySelectorAll('.materia .materia__cabeca > *')];
+// A cabeça inclui o VOLTAR, que fica fora do <header> mas aparece junto com ele.
+const partesDaCabeca = [...document.querySelectorAll('.materia .materia__cabeca > *, .materia__voltar')];
 const cartoes = [...document.querySelectorAll('.grade__item')];
 
 function entrar() {
-  // Chegando pela cortina branca, a cabeça já está à mostra: a cortina mostrou o mesmo título.
+  // Chegando pela cortina branca, cabeça e VOLTAR já estão à mostra: a cortina mostrou os mesmos, no mesmo lugar.
   const cabecaAnima = chegada !== 'branca';
   if (cabecaAnima) gsap.set(partesDaCabeca, { opacity: 0 });
   gsap.set(cartoes, { opacity: 0 });
@@ -28,8 +29,12 @@ function entrar() {
     tl.fromTo(partesDaCabeca, { opacity: 0, y: () => 0.5 * unidade(innerWidth, innerHeight) }, { opacity: 1, y: 0, duration: 0.3, ease: 'power2.out' }, 0);
     inicioDosCartoes = 0.3;
   }
-  // Cada cartão sobe 60 px e aparece, 0,1 s depois do anterior.
-  tl.fromTo(cartoes, { opacity: 0, y: 60 }, { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out', stagger: 0.1 }, inicioDosCartoes);
+  // Cada cartão sobe da borda de baixo da tela e aparece em 0,2 s, 0,02 s depois do anterior (medido no vídeo).
+  // A distância é medida antes de qualquer movimento: o GSAP avalia o valor inicial de novo quando cada cartão começa,
+  // e aí a posição já estaria deslocada.
+  const distancias = cartoes.map(el => Math.max(60, innerHeight - el.getBoundingClientRect().top));
+  tl.fromTo(cartoes, { opacity: 0 }, { opacity: 1, duration: 0.2, stagger: 0.02 }, inicioDosCartoes);
+  tl.fromTo(cartoes, { y: i => distancias[i] }, { y: 0, duration: 0.6, ease: 'expo.out', stagger: 0.02 }, inicioDosCartoes);
   return tl;
 }
 

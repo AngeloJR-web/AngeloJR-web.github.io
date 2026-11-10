@@ -7,7 +7,8 @@ import { AMOSTRAS, avaliar } from './curvas.js';
 import { MEDIDAS, unidade } from './geometria.js';
 
 const { gsap } = window;
-const ESCONDIDO = 120;
+// Fração do caminho até a linha fina em que a palavra está (0 = no lugar, 1 = escondida).
+const escondida = el => gsap.getProperty(el, 'yPercent') / (Number(el.dataset.escondido) || 120);
 
 const PASSO = 1 / 120;
 
@@ -39,8 +40,9 @@ export function iniciar({ slides, palco, textos, modo = 'passo' }) {
       t: tempoDoPasso ?? (performance.now() - info.t0) / 1000,
       de: ler(slides[info.de]),
       para: ler(slides[info.para]),
-      sai: gsap.getProperty(textos[info.de].titulo.words[0], 'yPercent'),
-      entra: gsap.getProperty(textos[info.para].titulo.words[0], 'yPercent'),
+      // 0 = no lugar, 1 = atrás da linha fina (o carrossel guarda em data-escondido quanto a palavra anda).
+      sai: escondida(textos[info.de].titulo.words[0]),
+      entra: escondida(textos[info.para].titulo.words[0]),
     });
   }
 
@@ -104,9 +106,9 @@ export function iniciar({ slides, palco, textos, modo = 'passo' }) {
     }
 
     // Texto: fim da saída da 1ª palavra e começo/fim da entrada da 1ª palavra nova.
-    checar('texto: 1ª palavra some', quando(a => a.sai >= ESCONDIDO - 0.05), c.saida.palavras[0].inicio + c.saida.palavras[0].duracao, 0.05);
-    checar('texto: 1ª palavra começa a entrar', quando(a => a.entra < ESCONDIDO - 0.05, c.crescer.inicio), c.entrada.palavras[0].inicio, 0.05);
-    checar('texto: 1ª palavra no lugar', quando(a => a.entra <= 0.05, c.crescer.inicio), c.entrada.palavras[0].inicio + c.entrada.palavras[0].duracao, 0.05);
+    checar('texto: 1ª palavra some', quando(a => a.sai >= 0.9995), c.saida.palavras[0].inicio + c.saida.palavras[0].duracao, 0.05);
+    checar('texto: 1ª palavra começa a entrar', quando(a => a.entra < 0.9995, c.crescer.inicio), c.entrada.palavras[0].inicio, 0.05);
+    checar('texto: 1ª palavra no lugar', quando(a => a.entra <= 1e-5, c.crescer.inicio), c.entrada.palavras[0].inicio + c.entrada.palavras[0].duracao, 0.05);
 
     const n = v => (Number.isFinite(v) ? v.toFixed(3) : String(v));
     for (const i of itens) console.info(`[medir] ${i.nome}: ${n(i.valor)} (esperado ${n(i.esperado)} ± ${i.tolerancia}) ${i.ok ? 'OK' : 'FALHA'}`);

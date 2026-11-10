@@ -2,7 +2,6 @@
 // aviso de chegada entre páginas e volta pelo cache do navegador (bfcache). Roda ao ser importado.
 import { registrarCurvas } from './curvas.js';
 import { marcarChegada, lerChegada } from './chegada.js';
-import { unidade } from './geometria.js';
 
 const { gsap, SplitText, CustomEase, Observer } = window;
 gsap.registerPlugin(SplitText, CustomEase, Observer);
@@ -25,7 +24,6 @@ export const reduzirMovimento = matchMedia('(prefers-reduced-motion: reduce)').m
 export const chegada = lerChegada(armazenamento());
 
 const espera = ms => new Promise(resolve => setTimeout(resolve, ms));
-const u = () => unidade(innerWidth, innerHeight);
 
 /* ---------- Cortinas ---------- */
 
@@ -45,7 +43,8 @@ function recolherCortina() {
   gsap.set(cortina, { yPercent: 100, opacity: 1 });
   cortina.classList.remove('cortina--branca', 'cortina--preta');
   cortinaMateria.replaceChildren();
-  html.classList.remove('chegou-preta');
+  html.classList.remove('chegou-preta', 'cortina-acima');
+  for (const el of document.querySelectorAll('.is-claro')) el.classList.remove('is-claro');
 }
 
 // Largura da barra de rolagem clássica (0 nas barras que flutuam sobre a página, como no celular).
@@ -73,24 +72,70 @@ function montarCabecalho({ titulo, italico }) {
   i.className = 'materia__italico';
   i.textContent = italico;
   cabeca.append(t, linha, i);
-  cortinaMateria.replaceChildren(cabeca);
-  return cabeca;
+  // O VOLTAR também vem na cortina, no mesmo lugar da página que vai abrir.
+  const voltar = document.createElement('span');
+  voltar.className = 'materia__voltar';
+  voltar.textContent = '‹ Voltar';
+  cortinaMateria.replaceChildren(cabeca, voltar);
+  return [t, linha, i, voltar];
+}
+
+// Cortina branca (medido no vídeo quadro a quadro): o título sobe dentro do painel a partir de 0,27 s, vindo de 25% da
+// altura da tela abaixo do lugar (power3.out em 0,70 s), e aparece em 0,2 s. A linha, o itálico e o VOLTAR fazem o mesmo
+// caminho na tela com atrasos de 0,12, 0,19 e 0,28 s, como se cada um tivesse um painel atrasado só seu.
+const CASCATA = { inicio: 0.27, atrasos: [0, 0.12, 0.19, 0.28], distancia: 0.25, duracao: 0.70, surge: 0.2, fim: 1.15 };
+
+function cascata(partes, painel) {
+  const curva = gsap.parseEase('cortina-branca');
+  const entre01 = v => Math.min(1, Math.max(0, v));
+  const altura = innerHeight;
+  const topoDoPainel = t => altura * (1 - curva(entre01(t / painel)));
+  const falta = t => (1 - entre01(t / CASCATA.duracao)) ** 3 * CASCATA.distancia * altura;
+  const relogio = { t: 0 };
+  const aplicar = () => partes.forEach((el, k) => {
+    const d = CASCATA.atrasos[k];
+    const t = relogio.t;
+    gsap.set(el, {
+      y: topoDoPainel(t - d) - topoDoPainel(t) + falta(t - CASCATA.inicio - d),
+      opacity: entre01((t - CASCATA.inicio - d) / CASCATA.surge),
+    });
+  });
+  aplicar();
+  return gsap.to(relogio, { t: CASCATA.fim, duration: CASCATA.fim, ease: 'none', onUpdate: aplicar, onComplete: () => gsap.set(partes, { y: 0, opacity: 1 }) });
+}
+
+// Cabeçalho e laterais ficam por cima da cortina branca e passam para o tema claro quando a borda dela chega ao meio de cada um.
+function laterais() {
+  html.classList.add('cortina-acima');
+  return [document.querySelector('.topo'), document.querySelector('.lateral'), document.querySelector('.sociais')]
+    .filter(Boolean)
+    .map(el => {
+      const r = (el.classList.contains('lateral') ? el.querySelector('.lateral__etiqueta') : el).getBoundingClientRect();
+      return { el, meio: r.top + r.height / 2 };
+    });
+}
+function clarear(alvos) {
+  const borda = cortina.getBoundingClientRect().top;
+  for (const a of alvos) a.el.classList.toggle('is-claro', borda <= a.meio);
 }
 
 export function cobrir(cor, { cabecalho } = {}) {
   pintarCortina(cor);
-  const cabeca = cor === 'branca' && cabecalho ? montarCabecalho(cabecalho) : null;
+  const partes = cor === 'branca' && cabecalho ? montarCabecalho(cabecalho) : [];
   return new Promise(resolve => {
     let linhaDoTempo;
     if (reduzirMovimento) {
       gsap.set(cortina, { yPercent: 0, opacity: 0 });
       linhaDoTempo = gsap.to(cortina, { opacity: 1, duration: 0.2, onComplete: resolve });
     } else {
-      const duracao = cor === 'branca' ? 0.65 : 0.45;
+      const branca = cor === 'branca';
+      const alvos = branca ? laterais() : [];
       linhaDoTempo = gsap.timeline({ onComplete: resolve });
-      linhaDoTempo.fromTo(cortina, { yPercent: 100, opacity: 1 }, { yPercent: 0, duration: duracao, ease: cor === 'branca' ? 'cortina-branca' : 'preta-entra' });
-      // Nos últimos 30% da subida, o título da matéria aparece subindo levemente (spec 7.2).
-      if (cabeca) linhaDoTempo.fromTo(cabeca, { opacity: 0, y: 0.5 * u() }, { opacity: 1, y: 0, duration: duracao * 0.3, ease: 'power2.out' }, duracao * 0.7);
+      linhaDoTempo.fromTo(cortina, { yPercent: 100, opacity: 1 }, {
+        yPercent: 0, duration: branca ? 0.65 : 0.45, ease: branca ? 'cortina-branca' : 'preta-entra',
+        onUpdate: alvos.length ? () => clarear(alvos) : undefined,
+      });
+      if (partes.length) linhaDoTempo.add(cascata(partes, 0.65), 0);
     }
     if (medindo) window.__cortina = linhaDoTempo;
   });
