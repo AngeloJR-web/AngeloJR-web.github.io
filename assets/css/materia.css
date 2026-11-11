@@ -59,7 +59,7 @@
 .materia__blocos p { margin: 0; }
 .materia__lista { margin: 0; padding-left: 1.2em; }
 
-.materia__proximo { margin-top: calc(8 * var(--u)); padding-top: calc(4 * var(--u)); border-top: 1px solid rgba(31, 31, 31, .2); text-align: center; }
+.materia__proximo { margin-top: calc(8 * var(--u)); padding-top: calc(4 * var(--u)); border-top: 1px solid color-mix(in srgb, var(--cor-texto-materia) 20%, transparent); text-align: center; }
 .materia__proximo-rotulo { display: block; font: 700 var(--tam-link)/1 var(--fonte-texto); letter-spacing: .1em; text-transform: uppercase; opacity: .65; }
 .materia__proximo a { display: inline-block; margin-top: calc(1.5 * var(--u)); text-decoration: none; }
 .materia__proximo-nome { display: block; padding-left: .2em; font: 400 max(28px, calc(4 * var(--u)))/1.1 var(--fonte-titulo); letter-spacing: .2em; text-transform: uppercase; }
@@ -104,8 +104,8 @@
 .formulario__campo { display: grid; gap: 8px; }
 .formulario label { font: 700 var(--tam-link)/1.4 var(--fonte-texto); letter-spacing: .1em; text-transform: uppercase; }
 .formulario input, .formulario select, .formulario textarea {
-  width: 100%; min-height: 48px; margin: 0; padding: 12px 14px; border: 1px solid rgba(31, 31, 31, .6); border-radius: 0;
-  background: #FFFFFF; color: inherit; font: 400 16px/1.5 var(--fonte-texto);
+  width: 100%; min-height: 48px; margin: 0; padding: 12px 14px; border: 1px solid color-mix(in srgb, var(--cor-texto-materia) 60%, transparent); border-radius: 0;
+  background: var(--cor-fundo-materia); color: inherit; font: 400 16px/1.5 var(--fonte-texto);
 }
 .formulario textarea { min-height: 160px; resize: vertical; }
 .formulario :is(input, select, textarea):focus-visible { outline: 1px solid currentColor; outline-offset: 2px; border-color: currentColor; }

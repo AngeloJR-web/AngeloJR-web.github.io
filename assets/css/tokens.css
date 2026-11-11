@@ -12,6 +12,7 @@
   --cor-texto-materia: #1F1F1F;
   --cor-social-foto: #FFFFFF;
   --cor-social-materia: #0C0C0C;
+  --cor-social-materia-icone: #FFFFFF;
   --cor-destaque: #D23C6E;
 
   /* Fontes */
@@ -39,3 +40,14 @@
   --grade-coluna: calc(24.5 * var(--u));
   --grade-espaco: calc(2.6 * var(--u));
 }
+
+/* Tema escuro, escolhido no botão do topo ou vindo do sistema. Vale no Início também,
+   porque a cortina que leva à Sobre e aos projetos usa estas cores. */
+:root.modo-escuro {
+  --cor-fundo-materia: #0D0D0D;
+  --cor-texto-materia: #EDEDED;
+  --cor-social-materia: #FFFFFF;
+  --cor-social-materia-icone: #0D0D0D;
+}
+/* O rosa de sempre fica abaixo de 4,5:1 no fundo escuro; este dá 5,5:1. */
+:root.tema-claro.modo-escuro { --cor-destaque: #E05A86; color-scheme: dark; }

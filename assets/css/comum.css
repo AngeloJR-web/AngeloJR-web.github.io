@@ -38,9 +38,13 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .topo__link[aria-current] { text-decoration: underline 1px var(--cor-destaque); text-underline-offset: calc(.4 * var(--u)); }
 .topo__barra { width: 1px; height: calc(.8 * var(--u)); background: currentColor; opacity: .5; }
 .topo__fim { margin-left: auto; display: flex; align-items: center; gap: calc(2.5 * var(--u)); }
-.topo__icone, .topo__menu { display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; }
-.topo__icone svg { width: max(16px, calc(1.2 * var(--u))); height: max(16px, calc(1.2 * var(--u))); }
+.topo__icone, .topo__tema, .topo__menu { display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; }
+.topo__icone svg, .topo__tema svg { width: max(16px, calc(1.2 * var(--u))); height: max(16px, calc(1.2 * var(--u))); }
 .topo__menu svg { width: max(18px, calc(1.4 * var(--u))); height: max(18px, calc(1.4 * var(--u))); }
+/* Botão de tema: lua no claro, sol no escuro. Sem JavaScript ele não faria nada, então some. */
+.topo__sol, .modo-escuro .topo__lua { display: none; }
+.modo-escuro .topo__sol { display: block; }
+html:not(.js) .topo__tema { display: none; }
 
 /* Laterais: marcador e etiqueta vertical no meio da altura, caixa social no canto. */
 .lateral__marcador {
@@ -61,19 +65,19 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .sociais a { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; }
 .sociais svg { width: max(16px, calc(1.2 * var(--u))); height: max(16px, calc(1.2 * var(--u))); }
 
-/* Temas: sobre a foto (Início) e claro (matérias). */
+/* Temas: sobre a foto (Início) e de matéria, claro ou escuro conforme as variáveis de cor. */
 .tema-foto .topo, .tema-foto .lateral { color: var(--cor-texto-foto); }
 .tema-claro .topo, .tema-claro .lateral { color: var(--cor-texto-materia); }
 .tema-claro .topo { background: var(--cor-fundo-materia); } /* fixo ao rolar: o texto da página não passa por baixo */
 .tema-foto .sociais { background: var(--cor-social-foto); color: var(--cor-fundo-cartao); }
-.tema-claro .sociais { background: var(--cor-social-materia); color: #FFFFFF; }
+.tema-claro .sociais { background: var(--cor-social-materia); color: var(--cor-social-materia-icone); }
 .topo, .lateral__etiqueta, .lateral__marcador, .sociais { transition: color .15s, background-color .15s; }
 /* Durante a cortina branca, o cabeçalho e as laterais ficam por cima dela e passam para o tema claro quando a borda
    dela os alcança (medido no vídeo). */
 .cortina-acima .topo, .cortina-acima .lateral__marcador, .cortina-acima .lateral__etiqueta, .cortina-acima .sociais { z-index: 101; }
 .topo.is-claro, .lateral.is-claro { color: var(--cor-texto-materia); }
 .topo.is-claro { background: var(--cor-fundo-materia); }
-.sociais.is-claro { background: var(--cor-social-materia); color: #FFFFFF; }
+.sociais.is-claro { background: var(--cor-social-materia); color: var(--cor-social-materia-icone); }
 
 /* Menu em tela cheia (derivado). */
 .menu {

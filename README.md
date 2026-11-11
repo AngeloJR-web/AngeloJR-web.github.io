@@ -26,7 +26,7 @@ Imagens:
 
 Estilos e scripts:
 
-- As cores, as fontes e os tamanhos ficam no `assets/css/tokens.css`.
+- As cores, as fontes e os tamanhos ficam no `assets/css/tokens.css`. As cores do tema escuro da Sobre e dos projetos estão no fim dele, e o `tema.js` guarda a escolha feita no botão do topo.
 - `inicio.css` cuida do carrossel do Início, e `materia.css` das páginas de projeto e da Sobre.
 - O cabeçalho, o menu, as laterais e as cortinas de transição estão em `comum.css` e `comum.js`.
 - Os tempos da troca de slide ficam no `cronograma.js`, as curvas das animações no `curvas.js` e o tamanho dos cartões (com o efeito de profundidade) no `MEDIDAS` do `geometria.js`.

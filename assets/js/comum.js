@@ -1,7 +1,8 @@
-// Partes comuns a todas as páginas: plugins do GSAP, curvas medidas, menu, cortinas,
+// Partes comuns a todas as páginas: plugins do GSAP, curvas medidas, menu, cortinas, tema claro ou escuro,
 // aviso de chegada entre páginas e volta pelo cache do navegador (bfcache). Roda ao ser importado.
 import { registrarCurvas } from './curvas.js';
 import { marcarChegada, lerChegada } from './chegada.js';
+import { lerTema, guardarTema, temaInicial, outroTema } from './tema.js';
 
 const { gsap, SplitText, CustomEase, Observer } = window;
 gsap.registerPlugin(SplitText, CustomEase, Observer);
@@ -224,6 +225,37 @@ menu.addEventListener('click', evento => {
   }
 });
 
+/* ---------- Tema claro ou escuro ---------- */
+
+// O script do <head> já aplicou o tema antes do CSS; aqui ficam o botão e as mudanças depois disso.
+const botaoTema = document.querySelector('.topo__tema');
+const sistemaEscuro = matchMedia('(prefers-color-scheme: dark)');
+
+function memoriaDoTema() {
+  try {
+    return window.localStorage;
+  } catch {
+    return undefined;
+  }
+}
+
+function aplicarTema(tema) {
+  html.classList.toggle('modo-escuro', tema === 'escuro');
+  botaoTema?.setAttribute('aria-pressed', String(tema === 'escuro'));
+}
+
+const temaDaPessoa = () => temaInicial(lerTema(memoriaDoTema()), sistemaEscuro.matches);
+aplicarTema(temaDaPessoa());
+
+botaoTema?.addEventListener('click', () => {
+  const novo = outroTema(html.classList.contains('modo-escuro') ? 'escuro' : 'claro');
+  guardarTema(memoriaDoTema(), novo);
+  aplicarTema(novo);
+});
+
+// Quem não escolheu acompanha o sistema, mesmo se ele mudar com a página aberta.
+sistemaEscuro.addEventListener('change', () => aplicarTema(temaDaPessoa()));
+
 /* ---------- Volta pelo cache do navegador ---------- */
 
 addEventListener('pageshow', evento => {
@@ -231,6 +263,7 @@ addEventListener('pageshow', evento => {
   recolherCortina();
   html.classList.remove('tema-foto', 'tema-claro');
   html.classList.add(html.dataset.tema === 'claro' ? 'tema-claro' : 'tema-foto');
+  aplicarTema(temaDaPessoa()); // a escolha pode ter mudado em outra página
   if (menu.open) {
     menu.close();
     gsap.set(menu, { clearProps: 'transform,opacity' });
